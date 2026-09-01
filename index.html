@@ -309,26 +309,43 @@
 
   /* ---- หน้าลงเวลาเข้าออกงาน ---- */
   .tm-map{
-    position:relative;height:190px;border-radius:12px;overflow:hidden;
+    position:relative;height:214px;border-radius:12px;overflow:hidden;
     background:#E8E9EF;border:1px solid var(--lav-line);
   }
   .tm-tiles{position:absolute;inset:0;}
   .tm-tiles img{position:absolute;width:256px;height:256px;}
+  /* จุดน้ำเงิน = ที่ช่างยืนอยู่  หมุดแดง = ไซต์ที่ลงทะเบียนไว้
+     วงกลมเส้นประ = ขอบเขต 200 ม. ที่เช็คอินได้ */
   .tm-dot{
-    position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;
-    border-radius:50%;background:#2C5FAE;border:2.5px solid #fff;box-shadow:0 0 0 4px rgba(44,95,174,.22);
+    position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;
+    border-radius:50%;background:#2C5FAE;border:2.5px solid #fff;
+    box-shadow:0 0 0 4px rgba(44,95,174,.22);
   }
+  .tm-pin{
+    position:absolute;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;
+    border-radius:50%;background:#D8352A;border:2.5px solid #fff;
+    box-shadow:0 0 0 3px rgba(216,53,42,.2);
+  }
+  .tm-ring{
+    position:absolute;border:2px dashed #D8352A;border-radius:50%;
+    background:rgba(216,53,42,.07);pointer-events:none;
+  }
+  .tm-day{
+    background:var(--lav-bg);border:1px solid var(--lav-line);border-radius:10px;
+    padding:11px 13px;margin-top:10px;display:flex;align-items:center;gap:10px;
+  }
+  .tm-day .ic{color:var(--navy);line-height:0;flex:0 0 auto;}
+  .tm-day .tx{font-size:13.5px;color:var(--navy);font-weight:600;}
   .tm-dist{
     position:absolute;top:8px;left:50%;transform:translateX(-50%);
     background:rgba(255,255,255,.92);border-radius:20px;padding:4px 12px;
     font-size:12px;color:var(--navy);white-space:nowrap;
   }
   .tm-clock{
-    position:absolute;left:0;right:0;bottom:0;padding:10px 0 12px;text-align:center;
-    background:linear-gradient(to top,rgba(255,255,255,.96) 62%,rgba(255,255,255,0));
+    position:absolute;left:0;right:0;bottom:0;padding:14px 0 10px;text-align:center;
+    background:linear-gradient(to top,rgba(255,255,255,.96) 58%,rgba(255,255,255,0));
   }
   .tm-hh{font-family:'Sora',sans-serif;font-weight:700;font-size:34px;color:var(--navy);line-height:1;}
-  .tm-dd{font-size:12.5px;color:var(--ink-faint);margin-top:5px;}
   .tm-where{display:flex;align-items:center;gap:10px;margin:14px 0;}
   .tm-where label{font-size:13px;color:var(--ink);flex:0 0 auto;}
   .tm-where select{flex:1;min-width:0;}
@@ -6755,26 +6772,72 @@
     return hit;
   }
 
-  /* วาดแผนที่จากภาพ tile ตามสูตรพิกัดมาตรฐาน ไม่ต้องพึ่งไลบรารี */
-  function drawTiles(box, lat, lon){
-    var z = 16, n = Math.pow(2, z), TS = 256;
+  /* ---- แผนที่จากภาพ tile ----
+     วาดเอง ไม่พึ่งไลบรารี ฟอร์มจึงยังเป็นไฟล์เดียวจบ
+     ถ้าเลือกไซต์ไว้ จะจัดกึ่งกลางที่ไซต์แล้ววงเส้นประรัศมี 200 ม.
+     ให้เห็นชัดว่าต้องยืนตรงไหนถึงจะเช็คอินได้ */
+  var MAP_Z = 16, TILE = 256;
+
+  function worldPx(lat, lon){
+    var n = Math.pow(2, MAP_Z);
     var x = (lon + 180) / 360 * n;
     var r = lat * Math.PI / 180;
     var y = (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n;
-    var W = box.clientWidth || 320, H = box.clientHeight || 190;
-    var px = x * TS, py = y * TS, out = [];
-    for(var i = Math.floor(x) - 2; i <= Math.floor(x) + 2; i++){
-      for(var j = Math.floor(y) - 2; j <= Math.floor(y) + 2; j++){
+    return { x: x * TILE, y: y * TILE };
+  }
+  /* กี่เมตรต่อหนึ่งพิกเซลที่ละติจูดนั้น */
+  function mPerPx(lat){
+    return 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, MAP_Z);
+  }
+
+  function drawMap(){
+    var box = $('tmTiles');
+    if(!box || !geoNow) return;
+    var st = currentSite();
+    var c  = st ? { lat: st.lat, lng: st.lng } : { lat: geoNow.lat, lng: geoNow.lng };
+
+    var W = box.clientWidth || 320, H = box.clientHeight || 214;
+    var cp = worldPx(c.lat, c.lng);
+    var n  = Math.pow(2, MAP_Z);
+
+    var out = [];
+    var i0 = Math.floor(cp.x / TILE), j0 = Math.floor(cp.y / TILE);
+    for(var i = i0 - 2; i <= i0 + 2; i++){
+      for(var j = j0 - 2; j <= j0 + 2; j++){
         if(j < 0 || j >= n) continue;
-        var tx = ((i % n) + n) % n;
-        var L = Math.round(i * TS - px + W / 2);
-        var T = Math.round(j * TS - py + H / 2);
-        if(L > W || T > H || L < -TS || T < -TS) continue;
+        var L = Math.round(i * TILE - cp.x + W / 2);
+        var T = Math.round(j * TILE - cp.y + H / 2);
+        if(L > W || T > H || L < -TILE || T < -TILE) continue;
         out.push('<img alt="" loading="lazy" style="left:' + L + 'px;top:' + T + 'px" src="' +
-                 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + j + '.png">');
+                 'https://tile.openstreetmap.org/' + MAP_Z + '/' + (((i % n) + n) % n) + '/' + j + '.png">');
       }
     }
     box.innerHTML = out.join('');
+
+    var ring = $('tmRing'), pin = $('tmPin'), dot = $('tmDot');
+    if(st){
+      var rad = GEOFENCE_M / mPerPx(c.lat);
+      ring.style.display = '';
+      ring.style.width  = ring.style.height = (rad * 2) + 'px';
+      ring.style.left = (W / 2 - rad) + 'px';
+      ring.style.top  = (H / 2 - rad) + 'px';
+      pin.style.display = '';
+      pin.style.left = (W / 2) + 'px';
+      pin.style.top  = (H / 2) + 'px';
+    } else {
+      ring.style.display = 'none';
+      pin.style.display  = 'none';
+    }
+
+    var up = worldPx(geoNow.lat, geoNow.lng);
+    var dx = up.x - cp.x + W / 2, dy = up.y - cp.y + H / 2;
+    if(dx < -20 || dx > W + 20 || dy < -20 || dy > H + 20){
+      dot.style.display = 'none';       /* ยืนไกลจนหลุดกรอบแผนที่ */
+    } else {
+      dot.style.display = '';
+      dot.style.left = dx + 'px';
+      dot.style.top  = dy + 'px';
+    }
   }
 
   function paintClock(){
@@ -6847,8 +6910,7 @@
     geoWatch = navigator.geolocation.watchPosition(function(pos){
       geoNow = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy };
       geoBox('');
-      var box = $('tmTiles');
-      if(box){ drawTiles(box, geoNow.lat, geoNow.lng); }
+      drawMap();
       var dot = $('tmDot'); if(dot){ dot.style.display = ''; }
       var d = $('tmDist');
       if(d){
@@ -6980,6 +7042,7 @@
         sel.value = list[list.length - 1].id;
       }
       paintFence();
+      drawMap();
     });
   }
 
@@ -7296,6 +7359,8 @@
     host.innerHTML =
       '<div class="tm-map">' +
         '<div class="tm-tiles" id="tmTiles"></div>' +
+        '<div class="tm-ring" id="tmRing" style="display:none;"></div>' +
+        '<div class="tm-pin" id="tmPin" style="display:none;"></div>' +
         '<div class="tm-dot" id="tmDot" style="display:none;"></div>' +
         '<div class="tm-dist" id="tmDist" style="display:none;"></div>' +
         '<button type="button" class="tm-locate" id="tmLocate" title="หาตำแหน่งใหม่" aria-label="หาตำแหน่งใหม่">' +
@@ -7304,9 +7369,13 @@
           '<path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>' +
         '</button>' +
         '<div class="tm-ask" id="tmAsk"></div>' +
-        '<div class="tm-clock"><div class="tm-hh" id="tmHH">--:--</div>' +
-        '<div class="tm-dd" id="tmDD">—</div></div>' +
+        '<div class="tm-clock"><div class="tm-hh" id="tmHH">--:--</div></div>' +
       '</div>' +
+      '<div class="tm-day"><span class="ic">' +
+        '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" ' +
+        'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+        '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>' +
+      '</span><span class="tx" id="tmDD">—</span></div>' +
       '<div class="tm-site-row"><label for="tmSite">ไซต์</label>' +
         '<select id="tmSite">' + siteOptions() + '</select>' +
         '<button type="button" class="tm-add" id="tmAddSite" title="เพิ่มไซต์จากตำแหน่งที่ยืนอยู่" ' +
@@ -7331,7 +7400,7 @@
     on('tmAddSite', 'click', function(){
       if($('tmNew').style.display === 'none'){ openNewSite(); } else { closeNewSite(); }
     });
-    on('tmSite', 'change', paintFence);
+    on('tmSite', 'change', function(){ paintFence(); drawMap(); });
     paintFence();
     askGeo(false);
   }
