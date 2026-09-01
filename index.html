@@ -380,7 +380,40 @@
   }
   .tm-site-row{display:flex;align-items:center;gap:8px;margin:14px 0;}
   .tm-site-row label{font-size:13px;color:var(--ink);flex:0 0 auto;}
-  .tm-site-row select{flex:1;min-width:0;}
+  /* ช่องไซต์เป็นปุ่มกด ไม่ใช่ dropdown แล้ว เพราะเลือกให้อัตโนมัติ */
+  .tm-site-btn{
+    flex:1;min-width:0;display:flex;align-items:center;gap:8px;
+    background:var(--lav-bg);border:1px solid var(--lav-line);border-radius:9px;
+    padding:9px 12px;cursor:pointer;font-family:inherit;text-align:left;
+  }
+  .tm-site-btn .nm{flex:1;min-width:0;font-size:14px;color:var(--navy);font-weight:600;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tm-site-btn .dt{font-size:12px;color:var(--ink-faint);flex:0 0 auto;}
+  /* หน้าเลือกสถานที่ */
+  .sp-search{
+    width:100%;background:var(--lav-bg);border:1px solid var(--lav-line);
+    border-radius:22px;padding:10px 16px;font-size:14px;margin-bottom:6px;
+  }
+  .sp-head{font-size:12px;color:var(--ink-faint);background:var(--page);
+    padding:9px 2px 6px;letter-spacing:.02em;}
+  .sp-item{
+    width:100%;display:flex;align-items:center;gap:12px;padding:11px 2px;
+    border:none;border-top:1px solid var(--lav-bg);background:none;
+    text-align:left;font-family:inherit;cursor:pointer;
+  }
+  .sp-item:first-of-type{border-top:none;}
+  .sp-ic{
+    width:38px;height:38px;border-radius:10px;background:var(--navy);color:#fff;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  }
+  .sp-g{flex:1;min-width:0;}
+  .sp-nm{font-size:14px;color:var(--navy);font-weight:600;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .sp-kd{font-size:12px;color:var(--ink-faint);margin-top:1px;}
+  .sp-dt{font-size:12.5px;color:var(--ink-faint);margin-top:3px;
+    display:flex;align-items:center;gap:4px;}
+  .sp-near{background:#E6F5EC;color:#1F7248;font-size:11px;padding:2px 9px;
+    border-radius:20px;flex:0 0 auto;}
   .tm-add{
     flex:0 0 auto;background:var(--lav-bg);border:1px solid var(--lav-line);
     border-radius:8px;width:38px;height:38px;font-size:19px;color:var(--navy);
@@ -443,7 +476,7 @@
   .jf-stamp h4{margin:0 0 12px;font-size:13.5px;color:var(--ink);font-weight:400;}
   .jf-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .jf-pk{font-size:12.5px;color:var(--ink-faint);}
-  .jf-pv{font-family:'Sora',sans-serif;font-weight:700;font-size:20px;margin-top:3px;color:var(--navy);}
+  .jf-pv{font-family:'Sora',sans-serif;font-weight:700;font-size:18px;margin-top:3px;color:var(--navy);}
   .jf-pv.none{color:#C7CBD8;}
   .jf-pd{font-size:11.5px;color:var(--ink-faint);margin-top:2px;}
   .jf-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
@@ -1771,10 +1804,12 @@
 
     <div class="jf-stamp">
       <h4>เวลาเข้าสถานที่</h4>
-      <div class="jf-pair">
-        <div><div class="jf-pk">เข้างาน</div>
+      <div class="jf-pair" style="grid-template-columns:repeat(3,1fr);">
+        <div><div class="jf-pk">ไปถึงหน้างาน</div>
+          <div class="jf-pv none" id="jfArrV">—</div><div class="jf-pd" id="jfArrD"></div></div>
+        <div><div class="jf-pk">เช็คอิน</div>
           <div class="jf-pv none" id="jfInV">—</div><div class="jf-pd" id="jfInD"></div></div>
-        <div><div class="jf-pk">ออกงาน</div>
+        <div><div class="jf-pk">เช็คเอาท์</div>
           <div class="jf-pv none" id="jfOutV">—</div><div class="jf-pd" id="jfOutD"></div></div>
       </div>
       <div class="jf-btns">
@@ -6664,7 +6699,9 @@
     try{
       var list = readSent();
       list.unshift({
-        at:   Date.now(),
+        at:   nowMs(),
+        dev:  Date.now(),
+        ok:   timeOK,
         u:    me ? me.u : '',
         cust: customerName().trim(),
         job:  (val('customerDetail') || '').trim(),
@@ -6915,10 +6952,26 @@
   function paintClock(){
     var el = $('tmHH');
     if(!el) return;
-    var d = new Date();
+    var d = new Date(nowMs());
     el.textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
     $('tmDD').textContent = 'วัน' + TH_DAYS[d.getDay()] + ', ' +
       ('0' + d.getDate()).slice(-2) + '/' + (d.getMonth() + 1) + '/' + (d.getFullYear() + 543);
+  }
+
+  /* บอกให้ช่างรู้ว่าเวลาที่ใช้บันทึกมาจากไหน */
+  function paintTimeNote(){
+    var el = $('tmNote');
+    if(!el) return;
+    if(!timeOK){
+      el.textContent = 'ยังเทียบนาฬิกากับเซิร์ฟเวอร์ไม่ได้ — ใช้นาฬิกาของเครื่องไปก่อน ' +
+                       'และจะติดธงไว้ว่ายังไม่ยืนยัน';
+    } else if(clockOff()){
+      var m = Math.round(timeSkew / 60000);
+      el.textContent = 'ใช้เวลาจากเซิร์ฟเวอร์ Google — นาฬิกาเครื่องนี้' +
+                       (m > 0 ? 'เร็วไป ' : 'ช้าไป ') + Math.abs(m) + ' นาที ระบบไม่ได้ใช้ค่านั้น';
+    } else {
+      el.textContent = 'เวลาที่บันทึกอ้างอิงนาฬิกาเซิร์ฟเวอร์ Google เปลี่ยนนาฬิกาเครื่องไม่มีผล';
+    }
   }
 
   function paintTimeTable(){
@@ -6962,14 +7015,17 @@
     if(kind === 'in' && d !== null && d > GEOFENCE_M){ paintFence(); return; }
 
     var nm = st ? st.name : '';
+    var t = stampNow();
     if(kind === 'in'){
-      row.inAt = Date.now(); row.inSite = nm; row.inSiteId = st && st.id;
+      row.inAt = t.at; row.inDev = t.dev; row.inOK = t.verified;
+      row.inSite = nm; row.inSiteId = st && st.id;
       row.inDist = d;                    /* null = ตรวจพิกัดไม่ได้ตอนนั้น */
-      if(geoNow){ row.inLat = geoNow.lat; row.inLng = geoNow.lng; }
+      if(geoNow){ row.inLat = geoNow.lat; row.inLng = geoNow.lng; row.inAcc = Math.round(geoNow.acc); }
     } else {
-      row.outAt = Date.now(); row.outSite = nm; row.outSiteId = st && st.id;
+      row.outAt = t.at; row.outDev = t.dev; row.outOK = t.verified;
+      row.outSite = nm; row.outSiteId = st && st.id;
       row.outDist = d;
-      if(geoNow){ row.outLat = geoNow.lat; row.outLng = geoNow.lng; }
+      if(geoNow){ row.outLat = geoNow.lat; row.outLng = geoNow.lng; row.outAcc = Math.round(geoNow.acc); }
     }
     try{ localStorage.setItem(TIME_KEY, JSON.stringify(list.slice(0, 400))); }catch(e){}
     paintTimeTable();
@@ -6981,6 +7037,8 @@
   function applyGeo(){
     if(!geoNow) return;
     geoBox('');
+    autoPickSite();     /* ขยับที่ ไซต์ใกล้สุดก็เปลี่ยน */
+    paintSiteBtn();
     drawMap();
     var d = $('tmDist');
     if(d){
@@ -6989,6 +7047,7 @@
                       (geoAt ? ' · อัปเดต ' + fmtClock(geoAt) : '');
     }
     paintFence();
+    paintSiteBtn();
     if(jobOpen){ paintJobStamp(); }
   }
 
@@ -7034,6 +7093,65 @@
     closeNewSite();
   }
 
+  /* ================== เวลาที่เชื่อถือได้ ==================
+     ปัญหา: ทุกอย่างเคยอิงนาฬิกาเครื่อง ช่างเลื่อนนาฬิกาแล้วลงเวลาย้อนหลังได้
+
+     วิธีแก้:
+     1) ตอนมีเน็ต ถามเวลาจริงจาก Apps Script แล้วจำ "จุดอ้างอิง" ไว้
+     2) หลังจากนั้นนับต่อด้วย performance.now() ซึ่งเดินหน้าอย่างเดียว
+        ไม่สนใจว่าใครไปตั้งนาฬิกาเครื่องใหม่ จึงยังตรงแม้อยู่ในห้องเครื่องไม่มีสัญญาณ
+     3) ถ้าปิดแอปแล้วเปิดใหม่ตอนไม่มีเน็ต ตัวนับเริ่มใหม่ ต้องถอยไปใช้นาฬิกาเครื่อง
+        กรณีนั้นจะติดธง verified:false ไว้ให้หัวหน้าเห็นว่ายังไม่ได้ยืนยัน */
+  var srvAnchor = 0;      /* เวลาเซิร์ฟเวอร์ ณ จุดอ้างอิง */
+  var perfAnchor = 0;     /* ค่า performance.now() ณ จุดเดียวกัน */
+  var timeOK = false;     /* เทียบนาฬิกาสำเร็จแล้วหรือยัง */
+  var timeSkew = 0;       /* นาฬิกาเครื่องคลาดจากของจริงกี่ ms */
+
+  function perfNow(){
+    return (window.performance && performance.now) ? performance.now() : Date.now();
+  }
+
+  /* เวลาที่ระบบใช้บันทึกทุกอย่าง */
+  function nowMs(){
+    if(!timeOK) return Date.now();
+    return Math.round(srvAnchor + (perfNow() - perfAnchor));
+  }
+
+  /* ต่างจากนาฬิกาเครื่องเกิน 3 นาที ถือว่ามีการปรับนาฬิกา */
+  function clockOff(){
+    return timeOK && Math.abs(timeSkew) > 180000;
+  }
+
+  function syncTime(){
+    if(!navigator.onLine) return;
+    try{
+      var cb = 'mceT' + Date.now();
+      var sc = document.createElement('script');
+      var t0 = perfNow();
+      window[cb] = function(res){
+        try{
+          if(res && res.ok && res.now){
+            /* หักครึ่งเวลาที่ใช้เดินทางไปกลับ ให้จุดอ้างอิงแม่นขึ้น */
+            var t1 = perfNow();
+            srvAnchor  = res.now + (t1 - t0) / 2;
+            perfAnchor = t1;
+            timeOK     = true;
+            timeSkew   = Date.now() - srvAnchor;
+          }
+        }catch(e){}
+        try{ delete window[cb]; sc.parentNode.removeChild(sc); }catch(e){}
+      };
+      sc.src = DRIVE_ENDPOINT + '?only=time&callback=' + cb;
+      sc.onerror = function(){ try{ delete window[cb]; }catch(e){} };
+      document.head.appendChild(sc);
+    }catch(e){}
+  }
+
+  /* ประทับเวลาลงบันทึก พร้อมบอกว่ายืนยันแล้วหรือยัง */
+  function stampNow(){
+    return { at: nowMs(), dev: Date.now(), verified: timeOK };
+  }
+
   /* ================== ไซต์งาน ==================
      ไซต์ = ชื่อ + พิกัดที่ลงทะเบียนไว้ ใช้ตรวจว่าตอนเช็คอินอยู่หน้างานจริงไหม
      เก็บพิกัดจาก GPS ตอนที่ยืนอยู่ที่นั่น จึงไม่ต้องไปหาละติจูดลองจิจูดเอง */
@@ -7065,9 +7183,31 @@
     return Math.round(2 * R * Math.asin(Math.sqrt(h)));
   }
 
-  function currentSite(){
-    var sel = $('tmSite');
-    return sel ? siteById(sel.value) : null;
+  var siteId   = '';      /* ไซต์ที่ใช้อยู่ */
+  var siteManual = false; /* ช่างเลือกเองหรือระบบเลือกให้ */
+
+  function currentSite(){ return siteById(siteId); }
+
+  /* ไซต์ที่ใกล้ที่สุดจากที่ยืนอยู่ */
+  function nearestSite(){
+    if(!geoNow) return null;
+    var best = null, bd = Infinity;
+    readSites().forEach(function(x){
+      var d = metersBetween(geoNow, x);
+      if(d < bd){ bd = d; best = x; }
+    });
+    return best;
+  }
+
+  /* ระบบเลือกไซต์ให้เอง เว้นแต่ช่างกดเลือกเองไว้ */
+  function autoPickSite(){
+    if(siteManual) return;
+    var n = nearestSite();
+    if(n && n.id !== siteId){ siteId = n.id; }
+    if(!siteId){
+      var all = readSites();
+      if(all.length === 1){ siteId = all[0].id; }
+    }
   }
 
   /* ระยะจากที่ยืนอยู่ถึงไซต์ที่เลือก — null = ยังบอกไม่ได้ */
@@ -7077,15 +7217,6 @@
     return metersBetween(geoNow, st);
   }
 
-  function siteOptions(){
-    var list = readSites();
-    if(!list.length){
-      return '<option value="">— ยังไม่มีไซต์ กด + เพื่อเพิ่ม —</option>';
-    }
-    return list.map(function(x){
-      return '<option value="' + escapeAttr(x.id) + '">' + escapeHtml(x.name) + '</option>';
-    }).join('');
-  }
 
   /* ---- กล่องเพิ่มไซต์ ---- */
   function openNewSite(){
@@ -7098,9 +7229,12 @@
 
     box.innerHTML =
       '<h4>เพิ่มไซต์งาน</h4>' +
-      '<label for="nsName">ชื่อไซต์</label>' +
-      '<input type="text" id="nsName" list="' + listId + '" placeholder="เช่น GPF หรือ McEnergy (ออฟฟิศ)">' +
+      '<label for="nsName">ชื่อสถานที่</label>' +
+      '<input type="text" id="nsName" list="' + listId + '" placeholder="เช่น GPF หรือ McEnergy">' +
       '<datalist id="' + listId + '">' + dl + '</datalist>' +
+      '<label for="nsKind">ประเภท</label>' +
+      '<select id="nsKind"><option value="customer">ไซต์ลูกค้า</option>' +
+        '<option value="office">สำนักงาน</option></select>' +
       '<div class="tm-gps" id="nsGps">—</div>' +
       '<div class="row">' +
         '<button type="button" class="no" id="nsCancel">ยกเลิก</button>' +
@@ -7130,16 +7264,15 @@
       list.push({
         id: 's' + Date.now(),
         name: nm,
+        kind: $('nsKind') ? $('nsKind').value : 'customer',
         lat: geoNow.lat, lng: geoNow.lng, acc: Math.round(geoNow.acc),
         at: Date.now()
       });
       saveSites(list);
       closeNewSite();
-      var sel = $('tmSite');
-      if(sel){
-        sel.innerHTML = siteOptions();
-        sel.value = list[list.length - 1].id;
-      }
+      siteId = list[list.length - 1].id;
+      siteManual = false;
+      paintSiteBtn();
       paintFence();
       drawMap();
     });
@@ -7150,6 +7283,89 @@
     var box = $('tmNew');
     if(box){ box.style.display = 'none'; box.innerHTML = ''; }
     if(nsTick){ clearInterval(nsTick); nsTick = null; }
+  }
+
+  /* ---- ชื่อไซต์ที่ใช้อยู่ บนหน้าลงเวลา ---- */
+  function paintSiteBtn(){
+    var nm = $('tmSiteNm'), dt = $('tmSiteDt');
+    if(!nm) return;
+    var st = currentSite();
+    if(!st){
+      nm.textContent = readSites().length ? 'แตะเพื่อเลือกสถานที่' : 'ยังไม่มีไซต์ กด + เพื่อเพิ่ม';
+      nm.style.color = 'var(--ink-faint)';
+      dt.textContent = '';
+      return;
+    }
+    nm.textContent = st.name;
+    nm.style.color = '';
+    var d = distToSite();
+    dt.textContent = d === null ? '' : (d + ' ม.');
+  }
+
+  /* ---- หน้าเลือกสถานที่ ---- */
+  var SITE_KIND = { office:'สำนักงาน', customer:'ไซต์ลูกค้า' };
+
+  function sitesByDistance(){
+    return readSites().map(function(x){
+      return { s: x, d: geoNow ? metersBetween(geoNow, x) : null };
+    }).sort(function(a, b){
+      if(a.d === null) return 1;
+      if(b.d === null) return -1;
+      return a.d - b.d;
+    });
+  }
+
+  function paneSites(){
+    var icOffice = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>';
+    var icSite   = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="2"/></svg>';
+    var icPin    = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+
+    function row(o, near){
+      var s = o.s;
+      return '<button type="button" class="sp-item" data-site="' + escapeAttr(s.id) + '">' +
+        '<span class="sp-ic">' + (s.kind === 'office' ? icOffice : icSite) + '</span>' +
+        '<span class="sp-g"><span class="sp-nm">' + escapeHtml(s.name) + '</span>' +
+        '<span class="sp-kd">' + (SITE_KIND[s.kind] || 'ไซต์ลูกค้า') + '</span>' +
+        '<span class="sp-dt">' + icPin + (o.d === null ? 'ยังไม่รู้ระยะ' : o.d + ' ม.') + '</span></span>' +
+        (near ? '<span class="sp-near">ใกล้ที่สุด</span>' : '') +
+      '</button>';
+    }
+
+    var all = sitesByDistance();
+    var html = '<input type="text" class="sp-search" id="spQ" placeholder="ค้นหาสถานที่" autocomplete="off">';
+
+    if(!all.length){
+      html += '<p style="font-size:12.5px;color:var(--ink-faint);text-align:center;padding:22px 0;line-height:1.6;">' +
+              'ยังไม่มีสถานที่<br>กลับไปกด + เพื่อเพิ่มจากตำแหน่งที่ยืนอยู่</p>';
+    } else {
+      if(geoNow){
+        html += '<div class="sp-head">สถานที่ปัจจุบัน</div>' + row(all[0], true);
+        if(all.length > 1){
+          html += '<div class="sp-head">สถานที่ที่เลือกได้ (' + (all.length - 1) + ')</div>' +
+                  '<div id="spList">' + all.slice(1).map(function(o){ return row(o, false); }).join('') + '</div>';
+        }
+      } else {
+        html += '<div class="sp-head">สถานที่ทั้งหมด (' + all.length + ')</div>' +
+                '<div id="spList">' + all.map(function(o){ return row(o, false); }).join('') + '</div>';
+      }
+    }
+    openPane(html);
+
+    on('spQ', 'input', function(){
+      var q = $('spQ').value.trim().toLowerCase();
+      Array.prototype.forEach.call($('menuPane').querySelectorAll('.sp-item'), function(el){
+        var nm = el.querySelector('.sp-nm').textContent.toLowerCase();
+        el.style.display = (!q || nm.indexOf(q) !== -1) ? '' : 'none';
+      });
+    });
+
+    $('menuPane').addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('[data-site]') : null;
+      if(!b) return;
+      siteId = b.getAttribute('data-site');
+      siteManual = true;          /* เลือกเอง ระบบจะไม่สลับให้อีก */
+      paintMenu();
+    });
   }
 
   /* ---- แถบบอกว่าอยู่ในระยะหรือยัง + คุมปุ่มเข้างาน ---- */
@@ -7231,7 +7447,10 @@
       u: me ? me.u : '',
       day: todayKey(),
       title:'', proj:'', siteId: st && st.id, siteName: st ? st.name : '',
-      start:'', end:'', status:'new', ref:'', desc:''
+      start:'', end:'', status:'new', ref:'', desc:'',
+      /* เปิดใบงานตอนไปถึงหน้างาน จึงประทับเวลาไปถึงให้ตั้งแต่ตอนสร้าง */
+      arriveAt: nowMs(), arriveDev: Date.now(), arriveOK: timeOK,
+      arriveDist: distToSite()
     };
   }
 
@@ -7335,8 +7554,9 @@
            (dist === null || dist === undefined ? ' · ไม่ได้ตรวจพิกัด' : ' · ห่าง ' + dist + ' ม.'))
         : '';
     }
-    put('jfInV',  'jfInD',  j.inAt,  j.inDist);
-    put('jfOutV', 'jfOutD', j.outAt, j.outDist);
+    put('jfArrV', 'jfArrD', j.arriveAt, j.arriveDist);
+    put('jfInV',  'jfInD',  j.inAt,     j.inDist);
+    put('jfOutV', 'jfOutD', j.outAt,    j.outDist);
 
     var d = jobDist();
     $('jfIn').disabled  = !!j.inAt || (d !== null && d > GEOFENCE_M);
@@ -7367,15 +7587,18 @@
             'เช็คอินได้เมื่ออยู่ในระยะ ' + GEOFENCE_M + ' ม.');
       return;
     }
+    var t = stampNow(), hhmm = new Date(t.at).toTimeString().slice(0, 5);
     if(kind === 'in'){
-      jobOpen.inAt = Date.now(); jobOpen.inDist = d;
-      if(!$('jfStart').value){
-        $('jfStart').value = new Date().toTimeString().slice(0, 5);   /* เริ่มงานตอนเช็คอิน */
-      }
+      jobOpen.inAt = t.at; jobOpen.inDev = t.dev; jobOpen.inOK = t.verified;
+      jobOpen.inDist = d;
+      if(geoNow){ jobOpen.inAcc = Math.round(geoNow.acc); }
+      if(!$('jfStart').value){ $('jfStart').value = hhmm; }   /* เริ่มงานตอนเช็คอิน */
       if($('jfStat').value === 'new'){ $('jfStat').value = 'doing'; }
     } else {
-      jobOpen.outAt = Date.now(); jobOpen.outDist = d;
-      if(!$('jfEnd').value){ $('jfEnd').value = new Date().toTimeString().slice(0, 5); }
+      jobOpen.outAt = t.at; jobOpen.outDev = t.dev; jobOpen.outOK = t.verified;
+      jobOpen.outDist = d;
+      if(geoNow){ jobOpen.outAcc = Math.round(geoNow.acc); }
+      if(!$('jfEnd').value){ $('jfEnd').value = hhmm; }
     }
     persistJob();
     paintJobStamp();
@@ -7505,7 +7728,7 @@
   }
 
   function newReq(type){
-    return { id:'r' + Date.now(), u: me ? me.u : '', type: type, at: Date.now(),
+    return { id:'r' + Date.now(), u: me ? me.u : '', type: type, at: nowMs(), atOK: timeOK,
              status:'pending', date: today10(), from: today10(), to: today10(),
              start:'17:00', end:'20:00', days:1, kind:'sick', note:'' };
   }
@@ -7536,7 +7759,7 @@
     var iPin  = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
     var iCase = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
 
-    var sites = readSites();
+    var sites = sitesByDistance().map(function(o){ return o.s; });
     var siteSel = '<select id="rqSite"><option value="">ไม่ระบุ</option>' +
       sites.map(function(x){
         return '<option value="' + escapeAttr(x.name) + '"' +
@@ -7697,7 +7920,8 @@
   function sendReq(){
     if(!reqOpen) return;
     reqOpen.status = 'pending';
-    reqOpen.sentAt = Date.now();
+    reqOpen.sentAt = nowMs();
+    reqOpen.sentOK = timeOK;
     saveReq();
   }
 
@@ -7822,8 +8046,10 @@
         'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
         '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>' +
       '</span><span class="tx" id="tmDD">—</span></div>' +
-      '<div class="tm-site-row"><label for="tmSite">ไซต์</label>' +
-        '<select id="tmSite">' + siteOptions() + '</select>' +
+      '<div class="tm-site-row"><label>พิกัด</label>' +
+        '<button type="button" class="tm-site-btn" id="tmSiteBtn">' +
+          '<span class="nm" id="tmSiteNm">—</span><span class="dt" id="tmSiteDt"></span>' +
+        '</button>' +
         '<button type="button" class="tm-add" id="tmAddSite" title="เพิ่มไซต์จากตำแหน่งที่ยืนอยู่" ' +
           'aria-label="เพิ่มไซต์">+</button></div>' +
       '<div class="tm-new" id="tmNew" style="display:none;"></div>' +
@@ -7834,19 +8060,22 @@
       '</div>' +
       '<div style="font-size:13px;color:var(--ink);margin:18px 0 0;">เวลาเข้าออกงาน</div>' +
       '<div class="tm-tbl" id="tmTbl"></div>' +
-      '<p class="tm-note" id="tmNote">เวลาที่บันทึกใช้นาฬิกาของเครื่อง และเก็บไว้ในเครื่องนี้เท่านั้น</p>';
+      '<p class="tm-note" id="tmNote"></p>';
 
+    autoPickSite();
+    paintSiteBtn();
     paintClock();
+    paintTimeNote();
     paintTimeTable();
     if(tmTick){ clearInterval(tmTick); }
     tmTick = setInterval(paintClock, 20000);
     $('tmIn').addEventListener('click',  function(){ stamp('in'); });
     $('tmOut').addEventListener('click', function(){ stamp('out'); });
-    on('tmLocate', 'click', function(){ stopGeo(); askGeo(true); });
+    on('tmLocate', 'click', function(){ siteManual = false; stopGeo(); askGeo(true); });
     on('tmAddSite', 'click', function(){
       if($('tmNew').style.display === 'none'){ openNewSite(); } else { closeNewSite(); }
     });
-    on('tmSite', 'change', function(){ paintFence(); drawMap(); });
+    on('tmSiteBtn', 'click', function(){ stopGeo(); paneSites(); });
     paintFence();
     askGeo(false);
   }
@@ -7988,6 +8217,10 @@
   }
 
   /* ---- init ---- */
+  syncTime();                      /* เทียบนาฬิกากับเซิร์ฟเวอร์ก่อนอย่างอื่น */
+  setInterval(syncTime, 600000);   /* แล้วเทียบซ้ำทุก 10 นาที */
+  window.addEventListener('online', syncTime);
+
   loadDraft();
   applyFieldValues();
   renderChecklist();
