@@ -221,7 +221,7 @@
   /* ================== หน้าเข้าใช้งาน + เมนู (v2) ==================
      สองหน้านี้ทับทั้งจอ ปิดฟอร์มไว้ข้างหลัง ไม่ยุ่งกับโครงเดิมของฟอร์มเลย
      ปิดทั้งคู่เมื่อไหร่ ฟอร์มก็กลับมาเป็นเหมือนเดิมทุกอย่าง */
-  .scr{position:fixed;inset:0;z-index:400;overflow-y:auto;display:none;}
+  .scr{position:fixed;inset:0;z-index:400;overflow-y:auto;display:none;background:var(--page);}
   .scr.on{display:block;}
   body.gated{overflow:hidden;}
 
@@ -251,7 +251,6 @@
   .auth-err.on{display:block;}
 
   /* ---- หน้าเมนู ---- */
-  #menuScreen{background:var(--page);}
   /* เต็มความกว้างจอ ไม่บีบเป็นคอลัมน์กลาง
      บนจอกว้างค่อยหยุดที่ 760px ไม่งั้นแถวเมนูจะยืดจนอ่านลำบาก */
   .menu-wrap{max-width:760px;margin:0 auto;padding:14px 14px 40px;}
@@ -270,6 +269,7 @@
   .menu-body{background:#fff;border-radius:0 0 12px 12px;padding:14px 14px 18px;}
   .menu-main{
     width:100%;background:#E4568E;border:none;border-radius:11px;padding:15px 16px;
+    margin-bottom:10px;
     display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;font-family:inherit;
   }
   .menu-main .mt{font-size:15px;color:#fff;font-weight:600;}
@@ -409,7 +409,6 @@
 
 
   /* ---- หน้าใบงานเต็มจอ ---- */
-  #jobScreen{background:var(--page);}
   .jf-bar{
     background:var(--navy);display:flex;align-items:center;gap:10px;
     padding:12px 14px;position:sticky;top:0;z-index:2;
@@ -454,6 +453,50 @@
   }
   .jf-btns button.out{background:#5F8AA6;}
   .jf-btns button:disabled{background:#C7CBD8;cursor:default;}
+  /* ---- ใบขออนุมัติ (โอที / เบี้ยเลี้ยง / ลา) ---- */
+  .menu-main.info{background:#2C6E8F;}
+  .rq-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:6px;}
+  .rq-pick button{
+    background:#fff;border:1px solid var(--lav-line);border-radius:11px;
+    padding:14px 8px;cursor:pointer;font-family:inherit;text-align:center;color:var(--navy);
+  }
+  .rq-pick button .ic{line-height:0;display:block;margin-bottom:7px;}
+  .rq-pick button .tx{font-size:12.5px;font-weight:600;}
+  .rq-quota{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0 4px;}
+  .rq-q{background:var(--lav-bg);border-radius:9px;padding:10px 11px;}
+  .rq-ql{font-size:11.5px;color:var(--ink-faint);}
+  .rq-qv{font-family:'Sora',sans-serif;font-weight:700;font-size:17px;color:var(--navy);margin-top:2px;}
+  .rq-qs{font-size:11px;color:var(--ink-faint);margin-top:1px;}
+  .rq-sum{
+    background:var(--lav-bg);border-radius:10px;padding:12px 14px;margin-top:4px;
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .rq-sum .k{font-size:13px;color:var(--ink);flex:1;}
+  .rq-sum .v{font-family:'Sora',sans-serif;font-weight:700;font-size:20px;color:var(--navy);}
+  .rq-warn{background:#FCEBEB;color:#8C2F2F;border-radius:9px;padding:10px 12px;
+    font-size:12.5px;line-height:1.5;margin-top:10px;}
+  .rq-tag{font-size:11px;padding:2px 9px;border-radius:20px;flex:0 0 auto;
+    background:#FAEEDA;color:#854F0B;}
+  .rq-tag.cancel{background:#FCEBEB;color:#8C2F2F;}
+  /* ใบขออนุมัติวางบนการ์ดขาว แยกตัวออกจากพื้นหลังหน้า */
+  .rq-card{
+    background:#fff;border:1px solid var(--lav-line);border-radius:12px;
+    padding:18px 16px 16px;
+  }
+  .rq-card .jf-sec{margin-top:0;}
+  .rq-note textarea{
+    width:100%;background:#FEFBE8;border:1px solid #F0DFA0;border-radius:10px;
+    padding:11px;font-size:14px;line-height:1.6;min-height:96px;resize:vertical;color:var(--ink);
+  }
+  .rq-go{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
+  .rq-go button{
+    border:none;border-radius:10px;padding:13px;font-family:inherit;
+    font-size:14px;font-weight:600;color:#fff;cursor:pointer;
+  }
+  .rq-go .send{background:#2E9E63;}
+  .rq-go .kill{background:#C94F4F;}
+  .rq-go button:disabled{background:#C7CBD8;cursor:default;}
+
   .jl-item{
     width:100%;display:flex;align-items:center;gap:11px;padding:12px 2px;
     border-top:1px solid var(--lav-bg);background:none;border-left:0;border-right:0;border-bottom:0;
@@ -472,7 +515,6 @@
   /* เส้นคั่นเส้นเดียว แยกหน้าลงเวลาออกจากชุดปุ่มด้านล่าง
      ไม่มีหัวข้อกำกับแล้ว ตัวปุ่มบอกตัวเองอยู่แล้วว่าคืออะไร */
   #jobPanel{margin-top:16px;padding-top:16px;border-top:1px solid var(--lav-bg);}
-  #jobPanel + .menu-main{margin-top:12px;}
 
   .emp-other{display:flex;gap:8px;margin-bottom:12px;}
   .emp-other input{flex:1;min-width:0;}
@@ -1658,10 +1700,10 @@
 
       <label for="authUser">ชื่อผู้ใช้</label>
       <input type="text" id="authUser" name="username" autocomplete="username"
-             autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Mce_faiso">
+             autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="User name">
 
       <label for="authPass">รหัสผ่าน</label>
-      <input type="password" id="authPass" name="password" autocomplete="current-password" placeholder="รหัสผ่าน">
+      <input type="password" id="authPass" name="password" autocomplete="current-password" placeholder="Password">
 
       <button type="submit" class="auth-go" id="authGo">เข้าใช้งาน</button>
 
@@ -1744,6 +1786,19 @@
   </div>
 </div>
 
+<!-- ============ หน้าใบขออนุมัติ ============ -->
+<div class="scr" id="reqScreen">
+  <div class="jf-bar">
+    <button type="button" class="jf-ic" id="rqBack" aria-label="กลับ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <span class="ttl" id="rqTtl">ใบขออนุมัติ</span>
+    <span class="jf-ic wide">
+      <button type="button" class="jf-ic" id="rqDel" aria-label="ลบ" style="background:none;width:22px;height:22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+      <button type="button" class="jf-ic" id="rqSave" aria-label="บันทึก" style="background:none;width:22px;height:22px;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
+    </span>
+  </div>
+  <div class="jf-wrap" id="rqBody"></div>
+</div>
+
 <!-- ============ หน้าเมนู ============ -->
 <div class="scr" id="menuScreen">
   <div class="menu-wrap">
@@ -1763,6 +1818,7 @@
       <div id="tmPanel"></div>
 
       <div id="jobPanel"></div>
+      <div id="reqPanel"></div>
 
       <button type="button" class="menu-main" id="mkNew">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M12 11v6M9 14h6"/></svg>
@@ -1773,7 +1829,7 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
       </button>
 
-      <div style="margin-top:10px;">
+      <div>
         <button type="button" class="menu-row" id="mkDraft">
           <span class="menu-ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M9 15l2 2 4-4"/></svg></span>
           <span class="g">ฉบับร่างค้าง</span>
@@ -2682,6 +2738,7 @@
     'ฟายโซ เต๊ะ',
     'ธนภัทร อยู่คง',
     'ณัฐพล จันต๊ะ',
+    'ธรรมมาวุธ นวลมุสิก',
     'พัฒนพงษ์ แสงศร',
     'กรเพ็รช จันทร์เป้า',
     'ณัฐพล กองสุวรรณ',
@@ -6554,7 +6611,18 @@
      ใครกด View Source ก็เห็น ตอนทำจริงต้องย้ายไปตรวจที่ Apps Script
      แล้วให้ฟังก์ชัน signIn() ยิงไปถามแทน จุดที่ต้องแก้อยู่ในนั้นจุดเดียว */
   var TRIAL_USERS = [
-    { u:'Mce_faiso', p:'10001024', name:'Faiso Teh', role:'ช่างบริการ' }
+    { u:'Faiso@mcenergy',          p:'100147', name:'ฟายโซ เต๊ะ', role:'ช่างบริการ' },
+    { u:'Thanaphat@mcenergy',      p:'100123', name:'ธนภัทร อยู่คง', role:'ช่างบริการ' },
+    { u:'Nattapol@mcenergy',       p:'100186', name:'ณัฐพล จันต๊ะ', role:'ช่างบริการ' },
+    { u:'Thammawut@mcenergy',      p:'100154', name:'ธรรมมาวุธ นวลมุสิก', role:'ช่างบริการ' },
+    { u:'Phatthanaphong@mcenergy', p:'100172', name:'พัฒนพงษ์ แสงศร', role:'ช่างบริการ' },
+    { u:'Kornpech@mcenergy',       p:'100139', name:'กรเพ็รช จันทร์เป้า', role:'ช่างบริการ' },
+    { u:'Natthaphon@mcenergy',     p:'100195', name:'ณัฐพล กองสุวรรณ', role:'ช่างบริการ' },
+    { u:'Nattawut@mcenergy',       p:'100168', name:'ฌัฐวุฒิ สารแดง', role:'ช่างบริการ' },
+    { u:'Watcharaphong@mcenergy',  p:'100131', name:'วัชรพงษ์ เสนาบุญ', role:'ช่างบริการ' },
+    { u:'Sirawut@mcenergy',        p:'100157', name:'ศิรวุธ ทาอามาตร์', role:'ช่างบริการ' },
+    { u:'Adichat@mcenergy',        p:'100184', name:'อดิชาติ พันธุ์วิเชียร', role:'ช่างบริการ' },
+    { u:'Enter@mcenergy',          p:'100110', name:'นักศึกษาฝึกงาน', role:'ฝึกงาน' }
   ];
 
   var AUTH_KEY = 'mce_auth_v1';
@@ -6639,6 +6707,7 @@
     $('authScreen').classList.toggle('on', which === 'auth');
     $('menuScreen').classList.toggle('on', which === 'menu');
     $('jobScreen').classList.toggle('on',  which === 'job');
+    $('reqScreen').classList.toggle('on',  which === 'req');
     document.body.classList.toggle('gated', which !== 'form');
     if(which !== 'form'){ window.scrollTo(0, 0); }
     /* หน้าใบงานต้องรู้ระยะด้วย จึงต้องจับพิกัดต่อ */
@@ -6684,6 +6753,7 @@
     $('menuSub2').style.display = 'none';
     renderTimePanel();   /* หน้าลงเวลาคือหน้าแรก วาดใหม่ทุกครั้งที่กลับมา */
     renderJobs();
+    renderReqs();
   }
 
   function openPane(html){
@@ -6753,6 +6823,8 @@
   var WORK_OUT  = '17:00';
   var geoNow    = null;
   var geoWatch  = null;
+  var geoTick   = null;     /* ตัวถามพิกัดซ้ำ */
+  var geoAt     = 0;        /* อ่านพิกัดได้ครั้งล่าสุดเมื่อไหร่ */
   var tmTick    = null;
 
   var TH_DAYS = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
@@ -6905,25 +6977,51 @@
     paintMenuHead();
   }
 
+  /* เอาพิกัดล่าสุดที่มีอยู่มาวาดลงหน้าจอ ใช้ซ้ำได้ทุกที่ */
+  function applyGeo(){
+    if(!geoNow) return;
+    geoBox('');
+    drawMap();
+    var d = $('tmDist');
+    if(d){
+      d.style.display = '';
+      d.textContent = 'ความแม่นยำ ± ' + Math.round(geoNow.acc) + ' ม.' +
+                      (geoAt ? ' · อัปเดต ' + fmtClock(geoAt) : '');
+    }
+    paintFence();
+    if(jobOpen){ paintJobStamp(); }
+  }
+
+  function fmtClock(ms){
+    var d = new Date(ms);
+    return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) +
+           ':' + ('0' + d.getSeconds()).slice(-2);
+  }
+
+  function takeGeo(pos){
+    geoNow = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy };
+    geoAt  = Date.now();
+    applyGeo();
+  }
+
   function startGeo(userAsked){
-    if(geoWatch !== null) return;
-    geoWatch = navigator.geolocation.watchPosition(function(pos){
-      geoNow = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy };
-      geoBox('');
-      drawMap();
-      var dot = $('tmDot'); if(dot){ dot.style.display = ''; }
-      var d = $('tmDist');
-      if(d){
-        d.style.display = '';
-        d.textContent = 'ความแม่นยำ ± ' + Math.round(geoNow.acc) + ' ม.';
-      }
-      paintFence();   /* ตำแหน่งขยับ ระยะถึงไซต์ก็ต้องคิดใหม่ */
-      if(jobOpen){ paintJobStamp(); }
-    }, geoFail, {
-      enableHighAccuracy: true,
-      maximumAge: userAsked ? 0 : 15000,
-      timeout: 20000
-    });
+    if(geoWatch === null){
+      geoWatch = navigator.geolocation.watchPosition(takeGeo, geoFail, {
+        enableHighAccuracy: true,
+        maximumAge: userAsked ? 0 : 10000,
+        timeout: 25000
+      });
+    }
+    /* watchPosition ยิงเฉพาะตอนตำแหน่งขยับพอสมควร ยืนอยู่กับที่จะเงียบไปเลย
+       จึงถามซ้ำเองทุก 10 วินาที ค่าความแม่นยำกับระยะจะได้ขยับตามจริง */
+    if(geoTick === null){
+      geoTick = setInterval(function(){
+        if(!$('tmTiles') && !jobOpen) return;      /* ไม่ได้อยู่หน้าที่ใช้พิกัด */
+        navigator.geolocation.getCurrentPosition(takeGeo, function(){}, {
+          enableHighAccuracy: true, maximumAge: 5000, timeout: 15000
+        });
+      }, 10000);
+    }
   }
 
   function stopGeo(){
@@ -6931,6 +7029,7 @@
       navigator.geolocation.clearWatch(geoWatch);
       geoWatch = null;
     }
+    if(geoTick !== null){ clearInterval(geoTick); geoTick = null; }
     if(tmTick){ clearInterval(tmTick); tmTick = null; }
     closeNewSite();
   }
@@ -7351,6 +7450,353 @@
     });
   }
 
+  /* ================== ใบขออนุมัติ ==================
+     โอที / เบี้ยเลี้ยง / ลา  ใช้หน้าเดียวกัน สลับช่องตามประเภท
+     ยังไม่มีสายอนุมัติ ทุกใบจึงค้างที่ "รออนุมัติ" จนกว่าจะต่อกับชีต */
+  var REQ_KEY = 'mce_requests_v1';
+  var LEAVE_QUOTA = { sick:30, personal:7, vacation:15 };
+  var LEAVE_NAME  = { sick:'ลาป่วย', personal:'ลากิจ', vacation:'ลาพักร้อน' };
+  var REQ_NAME    = { ot:'ขอโอที', perdiem:'ขอเบี้ยเลี้ยง', leave:'ขอลา' };
+  var reqOpen = null;
+
+  function readReqs(){
+    try{
+      var a = JSON.parse(localStorage.getItem(REQ_KEY) || '[]');
+      return Object.prototype.toString.call(a) === '[object Array]' ? a : [];
+    }catch(e){ return []; }
+  }
+  function saveReqs(list){
+    try{ localStorage.setItem(REQ_KEY, JSON.stringify(list.slice(0, 400))); }catch(e){}
+  }
+  function myReqs(){
+    var u = me ? me.u : '';
+    return readReqs().filter(function(r){ return r.u === u; });
+  }
+
+  function today10(){ return new Date().toISOString().slice(0, 10); }
+
+  /* จำนวนวันแบบนับหัวนับท้าย 1-3 ก.ย. = 3 วัน */
+  function daysBetween(a, b){
+    if(!a || !b) return 0;
+    var d1 = new Date(a + 'T00:00:00'), d2 = new Date(b + 'T00:00:00');
+    var n = Math.round((d2 - d1) / 864e5) + 1;
+    return n > 0 ? n : 0;
+  }
+
+  /* ชั่วโมงโอที ข้ามเที่ยงคืนได้ */
+  function hoursBetween(a, b){
+    if(!a || !b) return 0;
+    var p = a.split(':'), q = b.split(':');
+    var m1 = (+p[0]) * 60 + (+p[1]), m2 = (+q[0]) * 60 + (+q[1]);
+    var d = m2 - m1;
+    if(d <= 0){ d += 1440; }          /* เลิกหลังเที่ยงคืน */
+    return Math.round(d / 6) / 10;    /* ปัดเป็นทศนิยม 1 ตำแหน่ง */
+  }
+
+  /* ใช้ลาไปแล้วกี่วันในปีนี้ ไม่นับใบที่กำลังเปิดแก้อยู่ */
+  function leaveUsed(kind, skipId){
+    var y = new Date().getFullYear();
+    return myReqs().reduce(function(sum, r){
+      if(r.type !== 'leave' || r.kind !== kind) return sum;
+      if(skipId && r.id === skipId) return sum;
+      if(new Date(r.at).getFullYear() !== y) return sum;
+      return sum + (r.days || 0);
+    }, 0);
+  }
+
+  function newReq(type){
+    return { id:'r' + Date.now(), u: me ? me.u : '', type: type, at: Date.now(),
+             status:'pending', date: today10(), from: today10(), to: today10(),
+             start:'17:00', end:'20:00', days:1, kind:'sick', note:'' };
+  }
+
+  /* ---------- หน้าใบขออนุมัติ ---------- */
+  function openReq(type, id){
+    reqOpen = id ? (function(){ var h=null; readReqs().some(function(r){ if(r.id===id){h=r;return true;} }); return h; })()
+                 : newReq(type);
+    if(!reqOpen) return;
+    var r = reqOpen;
+    $('rqTtl').textContent = REQ_NAME[r.type] || 'ใบขออนุมัติ';
+    $('rqBody').innerHTML = reqFormHtml(r);
+    bindReqForm();
+    reqRecalc();
+    showScreen('req');
+  }
+
+  function fldRow(icon, label, inner){
+    return '<div class="jf-row"><span class="ico">' + icon + '</span>' +
+           '<span class="fld"><label>' + label + '</label>' + inner + '</span></div>';
+  }
+
+  function reqFormHtml(r){
+    var iCal  = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+    var iClk  = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+    var iList = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+    var iNote = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>';
+    var iPin  = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
+    var iCase = '<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
+
+    var sites = readSites();
+    var siteSel = '<select id="rqSite"><option value="">ไม่ระบุ</option>' +
+      sites.map(function(x){
+        return '<option value="' + escapeAttr(x.name) + '"' +
+               (r.site === x.name ? ' selected' : '') + '>' + escapeHtml(x.name) + '</option>';
+      }).join('') + '</select>';
+
+    /* หน้างานที่เข้า ดึงจากใบงานที่เปิดไว้ย้อนหลัง 7 วัน จะได้ไม่ต้องพิมพ์ใหม่ */
+    var u = me ? me.u : '';
+    var recent = readJobs2().filter(function(j){
+      return j.u === u && (Date.now() - (j.arriveAt || 0)) < 7 * 864e5;
+    }).slice(0, 30);
+    var jobSel = '<select id="rqJob"><option value="">ไม่ระบุ / กรอกเอง</option>' +
+      recent.map(function(j){
+        var lb = (j.title || 'ไม่มีหัวข้อ') + (j.siteName ? ' · ' + j.siteName : '');
+        return '<option value="' + escapeAttr(j.id) + '"' +
+               (r.jobId === j.id ? ' selected' : '') + '>' + escapeHtml(lb) + '</option>';
+      }).join('') + '</select>';
+
+    var body = '';
+
+    if(r.type === 'ot'){
+      body =
+        fldRow(iCal, 'วันที่ทำโอที', '<input type="date" id="rqDate" value="' + escapeAttr(r.date) + '">') +
+        fldRow(iClk, 'เวลาเริ่ม',    '<input type="time" id="rqStart" value="' + escapeAttr(r.start) + '">') +
+        fldRow(iClk, 'เวลาสิ้นสุด',  '<input type="time" id="rqEnd" value="' + escapeAttr(r.end) + '">') +
+        fldRow(iPin, 'สถานที่',      siteSel) +
+        fldRow(iCase,'หน้างานที่เข้า', jobSel) +
+        '<div class="rq-sum"><span class="k">รวมเวลาโอที</span><span class="v" id="rqSum">—</span></div>';
+    } else if(r.type === 'perdiem'){
+      body =
+        fldRow(iCal, 'วันที่เริ่ม',   '<input type="date" id="rqDate" value="' + escapeAttr(r.date) + '">') +
+        fldRow(iList,'จำนวนวัน',     '<input type="number" id="rqDays" min="1" max="60" step="1" value="' + (r.days || 1) + '">') +
+        fldRow(iPin, 'สถานที่',      siteSel) +
+        fldRow(iCase,'หน้างานที่เข้า', jobSel) +
+        '<div class="rq-sum"><span class="k">ขอเบี้ยเลี้ยงรวม</span><span class="v" id="rqSum">—</span></div>';
+    } else {
+      var opts = ['sick','personal','vacation'].map(function(k){
+        return '<option value="' + k + '"' + (r.kind === k ? ' selected' : '') + '>' +
+               LEAVE_NAME[k] + '</option>';
+      }).join('');
+      body =
+        fldRow(iList,'ประเภทการลา', '<select id="rqKind">' + opts + '</select>') +
+        fldRow(iCal, 'วันที่เริ่ม',  '<input type="date" id="rqFrom" value="' + escapeAttr(r.from) + '">') +
+        fldRow(iCal, 'วันที่สิ้นสุด','<input type="date" id="rqTo" value="' + escapeAttr(r.to) + '">') +
+        '<div class="rq-sum"><span class="k">รวมวันลา</span><span class="v" id="rqSum">—</span></div>' +
+        '<div id="rqQuota"></div>';
+    }
+
+    var noteLabel = r.type === 'leave' ? 'เหตุผลการลา' : 'รายละเอียดงาน';
+    var notePh    = r.type === 'leave' ? 'ระบุเหตุผล' : 'ทำอะไรบ้าง ที่ไหน กับใคร';
+
+    return '<div class="rq-card">' +
+      '<div class="jf-sec">รายละเอียดคำขอ</div>' + body +
+      '<div class="jf-row rq-note"><span class="ico">' + iNote + '</span>' +
+        '<span class="fld"><label for="rqNote">' + noteLabel + '</label>' +
+        '<textarea id="rqNote" maxlength="1000" placeholder="' + notePh + '">' +
+          escapeHtml(r.note || '') + '</textarea></span></div>' +
+      '<p class="jf-cnt" id="rqState" style="text-align:left;margin-top:6px;"></p>' +
+      '<div class="rq-go">' +
+        '<button type="button" class="send" id="rqSend">ส่งอนุมัติ</button>' +
+        '<button type="button" class="kill" id="rqCancel">ยกเลิก</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function bindReqForm(){
+    ['rqDate','rqStart','rqEnd','rqDays','rqFrom','rqTo','rqKind','rqSite','rqJob','rqNote']
+      .forEach(function(id){
+        var el = $(id);
+        if(el){ el.addEventListener('input', reqRecalc); el.addEventListener('change', reqRecalc); }
+      });
+    /* เลือกหน้างานแล้ว ถ้ายังไม่ได้เขียนรายละเอียด เติมจากใบงานให้เลย */
+    on('rqJob', 'change', function(){
+      var j = jobById($('rqJob').value);
+      if(!j) return;
+      if(!($('rqNote').value || '').trim()){
+        $('rqNote').value = [j.title, j.desc].filter(Boolean).join(' — ');
+      }
+      if($('rqSite') && !$('rqSite').value && j.siteName){ $('rqSite').value = j.siteName; }
+      reqRecalc();
+    });
+    on('rqSend',   'click', sendReq);
+    on('rqCancel', 'click', cancelReq);
+  }
+
+  /* คิดผลรวมใหม่ทุกครั้งที่แก้ช่อง */
+  function reqRecalc(){
+    var r = reqOpen;
+    if(!r) return;
+    if($('rqNote')){ r.note = $('rqNote').value; }
+    if($('rqSite')){ r.site = $('rqSite').value; }
+    if($('rqJob')){
+      r.jobId = $('rqJob').value;
+      var jb = jobById(r.jobId);
+      r.jobTitle = jb ? jb.title : '';
+    }
+    var st = $('rqState');
+    if(st){
+      st.textContent = r.status === 'cancelled'
+        ? 'สถานะ: ยกเลิกแล้ว'
+        : 'สถานะ: รออนุมัติ — ยังไม่มีสายอนุมัติในระบบ ใบนี้เก็บไว้ในเครื่องก่อน';
+    }
+
+    if(r.type === 'ot'){
+      r.date  = $('rqDate').value;
+      r.start = $('rqStart').value;
+      r.end   = $('rqEnd').value;
+      r.hours = hoursBetween(r.start, r.end);
+      $('rqSum').textContent = r.hours ? (r.hours + ' ชั่วโมง') : '—';
+    } else if(r.type === 'perdiem'){
+      r.date = $('rqDate').value;
+      r.days = Math.max(1, parseInt($('rqDays').value, 10) || 1);
+      $('rqSum').textContent = r.days + ' วัน';
+    } else {
+      r.kind = $('rqKind').value;
+      r.from = $('rqFrom').value;
+      r.to   = $('rqTo').value;
+      r.days = daysBetween(r.from, r.to);
+      $('rqSum').textContent = r.days ? (r.days + ' วัน') : '—';
+
+      var used = leaveUsed(r.kind, r.id), q = LEAVE_QUOTA[r.kind] || 0;
+      var left = q - used;
+      var html = '<div class="rq-quota">' +
+        ['sick','personal','vacation'].map(function(k){
+          var u2 = leaveUsed(k, r.id), qq = LEAVE_QUOTA[k];
+          return '<div class="rq-q"><div class="rq-ql">' + LEAVE_NAME[k] + '</div>' +
+                 '<div class="rq-qv">' + (qq - u2) + '</div>' +
+                 '<div class="rq-qs">เหลือ จาก ' + qq + ' วัน</div></div>';
+        }).join('') + '</div>';
+      if(r.days > left){
+        html += '<div class="rq-warn">ขอ ' + r.days + ' วัน แต่' + LEAVE_NAME[r.kind] +
+                'เหลือ ' + left + ' วัน — เกินโควตา ' + (r.days - left) + ' วัน</div>';
+      }
+      $('rqQuota').innerHTML = html;
+    }
+  }
+
+  function saveReq(){
+    var r = reqOpen;
+    if(!r) return;
+    reqRecalc();
+    if(r.type === 'ot' && !r.hours){ alert('เวลาเริ่มกับเวลาสิ้นสุดยังไม่ถูกต้อง'); return; }
+    if(r.type === 'leave' && !r.days){ alert('ช่วงวันลายังไม่ถูกต้อง'); return; }
+
+    var list = readReqs(), found = false;
+    list = list.map(function(x){ if(x.id === r.id){ found = true; return r; } return x; });
+    if(!found){ list.unshift(r); }
+    saveReqs(list);
+    reqOpen = null;
+    paintMenuHead();
+    showScreen('menu');
+    paneReqs();
+  }
+
+  /* ---- ปุ่มส่งอนุมัติ / ยกเลิก ----
+     ยังไม่มีปลายทางจริง กด "ส่งอนุมัติ" ตอนนี้แค่บันทึกใบไว้รอ
+     ตอนต่อกับชีตค่อยเปลี่ยนตรงนี้ให้ยิงขึ้นไปจริง */
+  function sendReq(){
+    if(!reqOpen) return;
+    reqOpen.status = 'pending';
+    reqOpen.sentAt = Date.now();
+    saveReq();
+  }
+
+  function cancelReq(){
+    if(!reqOpen) return;
+    var isNew = !readReqs().some(function(x){ return x.id === reqOpen.id; });
+    if(isNew){
+      if(!confirm('ทิ้งใบนี้ ไม่บันทึก?')) return;
+      reqOpen = null;
+      paintMenuHead(); showScreen('menu'); paneReqs();
+      return;
+    }
+    if(!confirm('ยกเลิกคำขอใบนี้?')) return;
+    reqOpen.status = 'cancelled';
+    saveReq();
+  }
+
+  function deleteReq(){
+    if(!reqOpen) return;
+    if(!confirm('ลบใบนี้?')) return;
+    var id = reqOpen.id;
+    saveReqs(readReqs().filter(function(x){ return x.id !== id; }));
+    reqOpen = null;
+    paintMenuHead();
+    showScreen('menu');
+    paneReqs();
+  }
+
+  /* ---------- ปุ่มบนหน้าแรก ---------- */
+  function renderReqs(){
+    var host = $('reqPanel');
+    if(!host) return;
+    var n = myReqs().filter(function(r){ return r.status === 'pending'; }).length;
+    host.innerHTML =
+      '<button type="button" class="menu-main info" id="rqOpen">' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+          'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/>' +
+          '<path d="M8 6H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-2"/>' +
+          '<path d="M9 13l2 2 4-4"/></svg>' +
+        '<span style="flex:1;min-width:0;">' +
+          '<span class="mt" style="display:block;">ใบขออนุมัติ</span>' +
+          '<span class="ms" style="display:block;">' +
+            (n ? ('รออนุมัติ ' + n + ' ใบ') : 'โอที · เบี้ยเลี้ยง · ลา') + '</span>' +
+        '</span>' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+          'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M9 6l6 6-6 6"/></svg>' +
+      '</button>';
+    on('rqOpen', 'click', function(){ stopGeo(); paneReqs(); });
+  }
+
+  /* ---------- หน้ารายการคำขอ ---------- */
+  function paneReqs(){
+    var list = myReqs();
+    var pick =
+      '<div class="rq-pick">' +
+        '<button type="button" data-new="ot"><span class="ic">' +
+          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' +
+        '</span><span class="tx">ขอโอที</span></button>' +
+        '<button type="button" data-new="perdiem"><span class="ic">' +
+          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg>' +
+        '</span><span class="tx">ขอเบี้ยเลี้ยง</span></button>' +
+        '<button type="button" data-new="leave"><span class="ic">' +
+          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l18-5-7 17-2.5-6.5z"/></svg>' +
+        '</span><span class="tx">ขอลา</span></button>' +
+      '</div>';
+
+    var rows = list.length
+      ? list.map(function(r){
+          var sub = [];
+          if(r.type === 'ot'){ sub.push(thDate(r.date), r.start + '–' + r.end, r.hours + ' ชม.'); }
+          else if(r.type === 'perdiem'){ sub.push(thDate(r.date), r.days + ' วัน'); }
+          else { sub.push(LEAVE_NAME[r.kind], thDate(r.from) + ' – ' + thDate(r.to), r.days + ' วัน'); }
+          return '<button type="button" class="jl-item" data-req="' + r.id + '">' +
+            '<span class="jl-g"><span class="jl-t">' + REQ_NAME[r.type] + '</span>' +
+            '<span class="jl-s">' + escapeHtml(sub.filter(Boolean).join(' · ')) + '</span></span>' +
+            '<span class="rq-tag' + (r.status === 'cancelled' ? ' cancel' : '') + '">' +
+              (r.status === 'cancelled' ? 'ยกเลิกแล้ว' : 'รออนุมัติ') + '</span></button>';
+        }).join('')
+      : '<p style="font-size:12.5px;color:var(--ink-faint);text-align:center;padding:20px 0;">ยังไม่มีคำขอ</p>';
+
+    openPane(pick + '<div style="margin-top:12px;">' + rows + '</div>');
+
+    $('menuPane').addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if(!b) return;
+      if(b.getAttribute('data-new')){ openReq(b.getAttribute('data-new'), null); }
+      else if(b.getAttribute('data-req')){ openReq(null, b.getAttribute('data-req')); }
+    });
+  }
+
+  function thDate(iso){
+    if(!iso) return '';
+    try{
+      return new Date(iso + 'T00:00:00').toLocaleDateString('th-TH', { day:'numeric', month:'short' });
+    }catch(e){ return iso; }
+  }
+
   /* วาดหน้าลงเวลาลงในหน้าแรกเลย ไม่ได้เป็นหน้าย่อยแล้ว */
   function renderTimePanel(){
     var host = $('tmPanel');
@@ -7426,11 +7872,16 @@
              'ถ้าเปิดไฟล์จากเครื่องตรง ๆ จะใช้ไม่ได้</p>');
       return;
     }
-    geoBox('<p>กำลังอ่านตำแหน่ง…</p>');
+    /* มีพิกัดเก่าอยู่แล้ว วาดจากตัวนั้นก่อนเลย
+       ไม่งั้นทุกครั้งที่กลับมาหน้านี้จะค้างที่ "กำลังอ่านตำแหน่ง…"
+       เพราะ watchPosition ยิงเฉพาะตอนตำแหน่งขยับ ยืนนิ่ง ๆ จะไม่มีอะไรมาปลุก */
+    if(geoNow){ applyGeo(); } else { geoBox('<p>กำลังอ่านตำแหน่ง…</p>'); }
     startGeo(userAsked);
   }
 
   function geoFail(err){
+    /* เคยอ่านได้แล้ว ครั้งนี้พลาดก็ไม่ต้องล้างแผนที่ทิ้ง ใช้ค่าเดิมต่อไป */
+    if(geoNow){ return; }
     var code = err && err.code;
     if(code === 1){
       geoBox('<p>ยังไม่ได้อนุญาตให้เข้าถึงตำแหน่ง<br>' +
@@ -7513,6 +7964,12 @@
   on('jfOut',  'click', function(){ jobStamp('out'); });
   on('jfDesc', 'input', jfCount);
   on('jfSite', 'change', paintJobStamp);
+
+  on('rqBack', 'click', function(){
+    reqOpen = null; paintMenuHead(); showScreen('menu'); paneReqs();
+  });
+  on('rqSave', 'click', saveReq);
+  on('rqDel',  'click', deleteReq);
 
   /* ปุ่มกลับเมนู วางไว้ในแถบบนของฟอร์ม */
   (function(){
