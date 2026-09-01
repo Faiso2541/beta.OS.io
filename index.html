@@ -271,6 +271,12 @@
   }
   .menu-main .mt{font-size:15px;color:#fff;font-weight:600;}
   .menu-main .ms{font-size:12px;color:rgba(255,255,255,.78);margin-top:2px;}
+  /* ปุ่มใบงาน ใช้โครงเดียวกับปุ่มสร้างรายงาน แต่เป็นสีเหลือง
+     ตัวหนังสือเป็นน้ำตาลเข้มแทนสีขาว เพราะขาวบนเหลืองอ่านยาก */
+  .menu-main.warn{background:#F2B024;}
+  .menu-main.warn .mt{color:#3D2A02;}
+  .menu-main.warn .ms{color:#7A5A10;}
+  .menu-main.warn svg{color:#3D2A02;}
   .menu-row{
     width:100%;background:none;border:none;border-top:1px solid var(--lav-bg);
     display:flex;align-items:center;gap:12px;padding:14px 2px;cursor:pointer;
@@ -381,28 +387,66 @@
     font-size:12.5px;line-height:1.5;margin-bottom:10px;
   }
 
-  .jb-head{display:flex;align-items:center;gap:8px;margin:0 0 10px;}
-  .jb-head .t{flex:1;font-size:13px;color:var(--ink);}
-  .jb-card{
-    border:1px solid var(--lav-line);border-radius:10px;padding:12px 13px;margin-bottom:9px;
+
+  /* ---- หน้าใบงานเต็มจอ ---- */
+  #jobScreen{background:var(--page);}
+  .jf-bar{
+    background:var(--navy);display:flex;align-items:center;gap:10px;
+    padding:12px 14px;position:sticky;top:0;z-index:2;
   }
-  .jb-card.done{background:var(--lav-bg);}
-  .jb-t{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35;}
-  .jb-s{font-size:12px;color:var(--ink-faint);margin-top:2px;}
-  .jb-times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px;}
-  .jb-cell{background:#F7F8FC;border-radius:8px;padding:8px 9px;text-align:center;}
-  .jb-cl{font-size:10.5px;color:var(--ink-faint);line-height:1.3;}
-  .jb-cv{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;margin-top:3px;color:var(--navy);}
-  .jb-cv.none{color:#C7CBD8;}
-  .jb-act{display:flex;gap:8px;margin-top:11px;}
-  .jb-act button{
-    flex:1;border:none;border-radius:8px;padding:9px;font-family:inherit;
-    font-size:12.5px;font-weight:600;color:#fff;background:#3FAE6A;cursor:pointer;
+  .jf-bar .ttl{flex:1;text-align:center;color:#fff;font-size:15px;font-weight:700;
+    font-family:'Sora',sans-serif;}
+  .jf-ic{
+    background:rgba(255,255,255,.14);border:none;color:#fff;cursor:pointer;
+    width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;flex:0 0 auto;padding:0;
   }
-  .jb-act button.out{background:#5F8AA6;}
-  .jb-act button.del{flex:0 0 auto;background:#fff;color:#C94F4F;border:1px solid #F0D2D2;font-weight:400;}
-  .jb-act button:disabled{background:#C7CBD8;cursor:default;}
-  .jb-empty{font-size:12.5px;color:var(--ink-faint);text-align:center;padding:14px 0;line-height:1.6;}
+  .jf-ic.wide{width:auto;padding:0 12px;gap:10px;border-radius:18px;}
+  .jf-wrap{max-width:520px;margin:0 auto;padding:16px 16px 40px;}
+  .jf-sec{font-size:13px;color:var(--ink-faint);margin:6px 0 14px;}
+  .jf-row{display:flex;gap:12px;margin-bottom:16px;}
+  .jf-row .ico{flex:0 0 auto;color:var(--navy);padding-top:16px;line-height:0;}
+  .jf-row .fld{flex:1;min-width:0;}
+  .jf-row label{display:block;font-size:12.5px;color:var(--ink-faint);margin-bottom:2px;}
+  .jf-row input[type=text],.jf-row input[type=time],.jf-row select{
+    width:100%;border:none;border-bottom:1px solid var(--lav-line);border-radius:0;
+    background:transparent;box-shadow:none;padding:7px 0;font-size:15px;color:var(--navy);
+  }
+  .jf-row input:focus,.jf-row select:focus{outline:none;border-bottom-color:var(--navy);box-shadow:none;}
+  .jf-row input::placeholder{color:#B4B2A9;}
+  .jf-note textarea{
+    width:100%;background:#FEFBE8;border:1px solid #F0DFA0;border-radius:10px;
+    padding:12px;font-size:14px;line-height:1.6;min-height:130px;resize:vertical;color:var(--ink);
+  }
+  .jf-cnt{font-size:11.5px;color:var(--ink-faint);text-align:right;margin-top:5px;}
+  .jf-stamp{background:#F4F5FA;border-radius:12px;padding:15px 16px;margin-top:22px;}
+  .jf-stamp h4{margin:0 0 12px;font-size:13.5px;color:var(--ink);font-weight:400;}
+  .jf-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .jf-pk{font-size:12.5px;color:var(--ink-faint);}
+  .jf-pv{font-family:'Sora',sans-serif;font-weight:700;font-size:20px;margin-top:3px;color:var(--navy);}
+  .jf-pv.none{color:#C7CBD8;}
+  .jf-pd{font-size:11.5px;color:var(--ink-faint);margin-top:2px;}
+  .jf-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+  .jf-btns button{
+    border:none;border-radius:9px;padding:12px;font-family:inherit;
+    font-size:13.5px;font-weight:600;color:#fff;background:#3FAE6A;cursor:pointer;
+  }
+  .jf-btns button.out{background:#5F8AA6;}
+  .jf-btns button:disabled{background:#C7CBD8;cursor:default;}
+  .jl-item{
+    width:100%;display:flex;align-items:center;gap:11px;padding:12px 2px;
+    border-top:1px solid var(--lav-bg);background:none;border-left:0;border-right:0;border-bottom:0;
+    text-align:left;font-family:inherit;cursor:pointer;
+  }
+  .jl-item:first-of-type{border-top:none;}
+  .jl-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:#C7CBD8;}
+  .jl-dot.on{background:#3FAE6A;}
+  .jl-dot.done{background:var(--navy);}
+  .jl-g{flex:1;min-width:0;}
+  .jl-t{font-size:13.5px;color:var(--navy);font-weight:600;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .jl-s{font-size:11.5px;color:var(--ink-faint);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
   .menu-split{
     font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;
@@ -1606,6 +1650,76 @@
 
       <div class="auth-err" id="authErr"></div>
     </form>
+  </div>
+</div>
+
+<!-- ============ หน้าใบงาน ============ -->
+<div class="scr" id="jobScreen">
+  <div class="jf-bar">
+    <button type="button" class="jf-ic" id="jfBack" aria-label="กลับ"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <span class="ttl">บันทึกงาน</span>
+    <span class="jf-ic wide">
+      <button type="button" class="jf-ic" id="jfDel" aria-label="ลบใบงาน" style="background:none;width:22px;height:22px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+      <button type="button" class="jf-ic" id="jfSave" aria-label="บันทึก" style="background:none;width:22px;height:22px;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
+    </span>
+  </div>
+
+  <div class="jf-wrap">
+    <div class="jf-sec">ข้อมูลการทำงาน</div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <span class="fld"><label for="jfTitle">หัวข้องาน</label>
+      <input type="text" id="jfTitle" placeholder="งานที่ทำ"></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+      <span class="fld"><label for="jfProj">โครงการ</label>
+      <select id="jfProj"></select></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+      <span class="fld"><label for="jfSite">สถานที่</label>
+      <select id="jfSite"></select></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v5h-5"/></svg></span>
+      <span class="fld"><label for="jfStart">เวลาเริ่มต้น</label>
+      <input type="time" id="jfStart"></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M21 17v-5h-5"/></svg></span>
+      <span class="fld"><label for="jfEnd">เวลาสิ้นสุด</label>
+      <input type="time" id="jfEnd"></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+      <span class="fld"><label for="jfStat">สถานะ</label>
+      <select id="jfStat">
+        <option value="new">งานใหม่</option>
+        <option value="doing">กำลังดำเนินการ</option>
+        <option value="wait">รออะไหล่ / รอลูกค้า</option>
+        <option value="done">เสร็จสิ้น</option>
+        <option value="cancel">ยกเลิก</option>
+      </select></span></div>
+
+    <div class="jf-row"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>
+      <span class="fld"><label for="jfRef">เลขที่เอกสารอ้างอิง</label>
+      <input type="text" id="jfRef" placeholder="ระบุเลขที่เอกสารอ้างอิง"></span></div>
+
+    <div class="jf-row jf-note"><span class="ico"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg></span>
+      <span class="fld"><label for="jfDesc">รายละเอียดงาน</label>
+      <textarea id="jfDesc" maxlength="2000" placeholder="2,000 ตัวอักษร"></textarea>
+      <div class="jf-cnt" id="jfCnt">0 / 2,000</div></span></div>
+
+    <div class="jf-stamp">
+      <h4>เวลาเข้าสถานที่</h4>
+      <div class="jf-pair">
+        <div><div class="jf-pk">เข้างาน</div>
+          <div class="jf-pv none" id="jfInV">—</div><div class="jf-pd" id="jfInD"></div></div>
+        <div><div class="jf-pk">ออกงาน</div>
+          <div class="jf-pv none" id="jfOutV">—</div><div class="jf-pd" id="jfOutD"></div></div>
+      </div>
+      <div class="jf-btns">
+        <button type="button" id="jfIn">เช็คอิน</button>
+        <button type="button" class="out" id="jfOut">เช็คเอาท์</button>
+      </div>
+      <p class="jf-cnt" id="jfFence" style="text-align:left;margin-top:10px;"></p>
+    </div>
   </div>
 </div>
 
@@ -6505,8 +6619,11 @@
   function showScreen(which){
     $('authScreen').classList.toggle('on', which === 'auth');
     $('menuScreen').classList.toggle('on', which === 'menu');
+    $('jobScreen').classList.toggle('on',  which === 'job');
     document.body.classList.toggle('gated', which !== 'form');
     if(which !== 'form'){ window.scrollTo(0, 0); }
+    /* หน้าใบงานต้องรู้ระยะด้วย จึงต้องจับพิกัดต่อ */
+    if(which === 'job'){ askGeo(false); }
   }
 
   /* เฉพาะแถบชื่อด้านบน เรียกซ้ำได้ ไม่ไปวาดหน้าลงเวลาใหม่ */
@@ -6737,6 +6854,7 @@
         d.textContent = 'ความแม่นยำ ± ' + Math.round(geoNow.acc) + ' ม.';
       }
       paintFence();   /* ตำแหน่งขยับ ระยะถึงไซต์ก็ต้องคิดใหม่ */
+      if(jobOpen){ paintJobStamp(); }
     }, geoFail, {
       enableHighAccuracy: true,
       maximumAge: userAsked ? 0 : 15000,
@@ -6932,100 +7050,216 @@
     return readJobs2().filter(function(j){ return j.u === u && j.day === k; });
   }
 
-  function jobStamp(id, kind){
-    var list = readJobs2(), hit = null;
-    list.some(function(j){ if(j.id === id){ hit = j; return true; } });
-    if(!hit) return;
+  var JOB_STATUS = { new:'งานใหม่', doing:'กำลังดำเนินการ', wait:'รออะไหล่ / รอลูกค้า',
+                     done:'เสร็จสิ้น', cancel:'ยกเลิก' };
+  var jobOpen = null;      /* ใบงานที่กำลังเปิดอยู่ */
 
-    var d = distToSite(), st = currentSite();
-    /* เช็คอินต้องอยู่หน้างานจริง เช็คเอาท์ไม่บังคับ เผื่อเดินออกมาแล้วเพิ่งนึกได้ */
+  function jobById(id){
+    var hit = null;
+    readJobs2().some(function(j){ if(j.id === id){ hit = j; return true; } });
+    return hit;
+  }
+
+  function newJob(){
+    var st = currentSite();
+    return {
+      id: 'j' + Date.now(),
+      u: me ? me.u : '',
+      day: todayKey(),
+      title:'', proj:'', siteId: st && st.id, siteName: st ? st.name : '',
+      start:'', end:'', status:'new', ref:'', desc:''
+    };
+  }
+
+  /* ---- เปิดหน้าใบงาน ---- */
+  function openJob(id){
+    jobOpen = id ? jobById(id) : newJob();
+    if(!jobOpen) return;
+    var j = jobOpen;
+
+    $('jfProj').innerHTML = '<option value="">กรุณาเลือก</option>' +
+      CUST_NAMES.map(function(n){
+        return '<option value="' + escapeAttr(n) + '">' + escapeHtml(n) + '</option>';
+      }).join('');
+    var sites = readSites();
+    $('jfSite').innerHTML = '<option value="">เลือกสถานที่ทำงาน</option>' +
+      sites.map(function(x){
+        return '<option value="' + escapeAttr(x.id) + '">' + escapeHtml(x.name) + '</option>';
+      }).join('');
+
+    $('jfTitle').value = j.title || '';
+    $('jfProj').value  = j.proj  || '';
+    $('jfSite').value  = j.siteId || '';
+    $('jfStart').value = j.start || '';
+    $('jfEnd').value   = j.end   || '';
+    $('jfStat').value  = j.status || 'new';
+    $('jfRef').value   = j.ref   || '';
+    $('jfDesc').value  = j.desc  || '';
+    jfCount();
+    paintJobStamp();
+    showScreen('job');
+  }
+
+  function jfCount(){
+    var n = ($('jfDesc').value || '').length;
+    $('jfCnt').textContent = n.toLocaleString('en-US') + ' / 2,000';
+  }
+
+  function collectJob(){
+    if(!jobOpen) return null;
+    var j = jobOpen;
+    j.title  = ($('jfTitle').value || '').trim();
+    j.proj   = $('jfProj').value;
+    j.siteId = $('jfSite').value;
+    var st   = siteById(j.siteId);
+    j.siteName = st ? st.name : '';
+    j.start  = $('jfStart').value;
+    j.end    = $('jfEnd').value;
+    j.status = $('jfStat').value;
+    j.ref    = ($('jfRef').value || '').trim();
+    j.desc   = $('jfDesc').value || '';
+    return j;
+  }
+
+  function persistJob(){
+    var j = collectJob();
+    if(!j) return null;
+    var list = readJobs2(), found = false;
+    list = list.map(function(x){
+      if(x.id === j.id){ found = true; return j; }
+      return x;
+    });
+    if(!found){ list.unshift(j); }
+    saveJobs2(list);
+    return j;
+  }
+
+  function saveJobAndBack(){
+    var j = collectJob();
+    if(!j.title){
+      alert('ยังไม่ได้ใส่หัวข้องาน');
+      $('jfTitle').focus();
+      return;
+    }
+    persistJob();
+    jobOpen = null;
+    paintMenu();
+    showScreen('menu');
+  }
+
+  function deleteJob(){
+    if(!jobOpen) return;
+    if(!confirm('ลบใบงานนี้?')) return;
+    var id = jobOpen.id;
+    saveJobs2(readJobs2().filter(function(x){ return x.id !== id; }));
+    jobOpen = null;
+    paintMenu();
+    showScreen('menu');
+  }
+
+  /* ---- เวลาเข้าสถานที่ ในใบงาน ---- */
+  function paintJobStamp(){
+    var j = jobOpen;
+    if(!j) return;
+    function put(v, d, at, dist){
+      $(v).textContent = at ? fmtTime(at) : '—';
+      $(v).className = 'jf-pv' + (at ? '' : ' none');
+      $(d).textContent = at
+        ? (new Date(at).toLocaleDateString('th-TH', { day:'numeric', month:'short' }) +
+           (dist === null || dist === undefined ? ' · ไม่ได้ตรวจพิกัด' : ' · ห่าง ' + dist + ' ม.'))
+        : '';
+    }
+    put('jfInV',  'jfInD',  j.inAt,  j.inDist);
+    put('jfOutV', 'jfOutD', j.outAt, j.outDist);
+
+    var d = jobDist();
+    $('jfIn').disabled  = !!j.inAt || (d !== null && d > GEOFENCE_M);
+    $('jfOut').disabled = !j.inAt || !!j.outAt;
+    $('jfIn').textContent  = j.inAt  ? 'เช็คอินแล้ว'  : 'เช็คอิน';
+    $('jfOut').textContent = j.outAt ? 'เช็คเอาท์แล้ว' : 'เช็คเอาท์';
+
+    var f = $('jfFence');
+    var st = siteById($('jfSite').value);
+    f.textContent = !st  ? 'เลือกสถานที่ก่อน จึงจะตรวจระยะได้'
+                  : d === null ? 'ยังอ่านตำแหน่งไม่ได้ — เช็คอินได้ แต่จะบันทึกว่าไม่ได้ตรวจพิกัด'
+                  : d > GEOFENCE_M ? ('อยู่นอกพื้นที่ ' + st.name + ' — ห่าง ' + d + ' ม. (ต้องอยู่ในระยะ ' + GEOFENCE_M + ' ม.)')
+                  : ('อยู่ในพื้นที่ ' + st.name + ' — ห่าง ' + d + ' ม.');
+  }
+
+  /* ระยะจากที่ยืนอยู่ถึงสถานที่ที่เลือกในใบงาน */
+  function jobDist(){
+    var st = siteById($('jfSite') ? $('jfSite').value : '');
+    if(!st || !geoNow) return null;
+    return metersBetween(geoNow, st);
+  }
+
+  function jobStamp(kind){
+    if(!jobOpen) return;
+    var d = jobDist(), st = siteById($('jfSite').value);
     if(kind === 'in' && d !== null && d > GEOFENCE_M){
       alert('อยู่นอกพื้นที่ ' + (st ? st.name : '') + ' — ห่าง ' + d + ' ม.\n' +
             'เช็คอินได้เมื่ออยู่ในระยะ ' + GEOFENCE_M + ' ม.');
       return;
     }
-    if(kind === 'in'){  hit.inAt  = Date.now(); hit.inDist  = d; }
-    else             {  hit.outAt = Date.now(); hit.outDist = d; }
-    saveJobs2(list);
-    renderJobs();
+    if(kind === 'in'){
+      jobOpen.inAt = Date.now(); jobOpen.inDist = d;
+      if(!$('jfStart').value){
+        $('jfStart').value = new Date().toTimeString().slice(0, 5);   /* เริ่มงานตอนเช็คอิน */
+      }
+      if($('jfStat').value === 'new'){ $('jfStat').value = 'doing'; }
+    } else {
+      jobOpen.outAt = Date.now(); jobOpen.outDist = d;
+      if(!$('jfEnd').value){ $('jfEnd').value = new Date().toTimeString().slice(0, 5); }
+    }
+    persistJob();
+    paintJobStamp();
   }
 
-  function jobDelete(id){
-    if(!confirm('ลบใบงานนี้?')) return;
-    saveJobs2(readJobs2().filter(function(j){ return j.id !== id; }));
-    renderJobs();
-  }
-
-  function addJob(){
-    var st = currentSite();
-    var title = prompt('หัวข้องาน');
-    if(title === null) return;
-    title = title.trim();
-    if(!title) return;
-
-    var list = readJobs2();
-    list.unshift({
-      id: 'j' + Date.now(),
-      u: me ? me.u : '',
-      day: todayKey(),
-      title: title,
-      siteId: st && st.id,
-      siteName: st ? st.name : '',
-      /* กดเพิ่มงานตอนไปถึง จึงบันทึกเวลาไปถึงหน้างานให้เลย */
-      arriveAt: Date.now(),
-      arriveDist: distToSite()
-    });
-    saveJobs2(list);
-    renderJobs();
-  }
-
+  /* ---- รายการใบงานบนหน้าแรก ---- */
   function renderJobs(){
     var host = $('jobPanel');
     if(!host) return;
     var list = todayJobs();
 
     var head =
-      '<div class="jb-head"><span class="t">งานวันนี้ ' + list.length + ' ใบ</span>' +
-      '<button type="button" class="tm-add" id="jbAdd" title="เพิ่มใบงาน" aria-label="เพิ่มใบงาน">+</button></div>';
+      '<button type="button" class="menu-main warn" id="jbAdd">' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+          'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M14 3v4a1 1 0 0 0 1 1h4"/>' +
+          '<path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/>' +
+          '<path d="M12 11v6M9 14h6"/></svg>' +
+        '<span style="flex:1;min-width:0;">' +
+          '<span class="mt" style="display:block;">เปิดใบงานใหม่</span>' +
+          '<span class="ms" style="display:block;">' +
+            (list.length ? ('งานวันนี้ ' + list.length + ' ใบ') : 'ยังไม่มีใบงานวันนี้') +
+          '</span>' +
+        '</span>' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+          'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M9 6l6 6-6 6"/></svg>' +
+      '</button>';
 
-    if(!list.length){
-      host.innerHTML = head +
-        '<p class="jb-empty">ยังไม่มีใบงานวันนี้<br>กด + เมื่อไปถึงหน้างาน ระบบจะจดเวลาไปถึงให้</p>';
-      on('jbAdd', 'click', addJob);
-      return;
-    }
+    host.innerHTML = head + (list.length
+      ? '<div style="margin-top:10px;">' + list.map(function(j){
+          var cls = j.outAt ? 'done' : (j.inAt ? 'on' : '');
+          var bits = [];
+          if(j.siteName){ bits.push(j.siteName); }
+          bits.push(JOB_STATUS[j.status] || 'งานใหม่');
+          if(j.inAt){ bits.push(fmtTime(j.inAt) + (j.outAt ? '–' + fmtTime(j.outAt) : '')); }
+          return '<button type="button" class="jl-item" data-open="' + j.id + '">' +
+            '<span class="jl-dot ' + cls + '"></span>' +
+            '<span class="jl-g"><span class="jl-t">' + escapeHtml(j.title || 'ไม่มีหัวข้อ') + '</span>' +
+            '<span class="jl-s">' + escapeHtml(bits.join(' · ')) + '</span></span>' +
+            '<span class="menu-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
+              'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M9 6l6 6-6 6"/></svg></span></button>';
+        }).join('') + '</div>'
+      : '');
 
-    function cell(label, at){
-      return '<div class="jb-cell"><div class="jb-cl">' + label + '</div>' +
-             '<div class="jb-cv' + (at ? '' : ' none') + '">' + (at ? fmtTime(at) : '—') + '</div></div>';
-    }
-
-    host.innerHTML = head + list.map(function(j){
-      var done = !!j.outAt;
-      return '<div class="jb-card' + (done ? ' done' : '') + '">' +
-        '<div class="jb-t">' + escapeHtml(j.title) + '</div>' +
-        '<div class="jb-s">' + escapeHtml(j.siteName || 'ไม่ได้ระบุไซต์') + '</div>' +
-        '<div class="jb-times">' +
-          cell('ไปถึงหน้างาน', j.arriveAt) + cell('เช็คอิน', j.inAt) + cell('เช็คเอาท์', j.outAt) +
-        '</div>' +
-        '<div class="jb-act">' +
-          '<button type="button" data-in="' + j.id + '"' + (j.inAt ? ' disabled' : '') + '>' +
-            (j.inAt ? 'เช็คอินแล้ว' : 'เช็คอิน') + '</button>' +
-          '<button type="button" class="out" data-out="' + j.id + '"' +
-            ((!j.inAt || j.outAt) ? ' disabled' : '') + '>' +
-            (j.outAt ? 'เช็คเอาท์แล้ว' : 'เช็คเอาท์') + '</button>' +
-          '<button type="button" class="del" data-del="' + j.id + '" aria-label="ลบใบงาน">ลบ</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-
-    on('jbAdd', 'click', addJob);
+    on('jbAdd', 'click', function(){ stopGeo(); openJob(null); });
     host.addEventListener('click', function(e){
-      var b = e.target.closest ? e.target.closest('button') : null;
-      if(!b) return;
-      if(b.getAttribute('data-in'))  { jobStamp(b.getAttribute('data-in'),  'in');  }
-      else if(b.getAttribute('data-out')){ jobStamp(b.getAttribute('data-out'), 'out'); }
-      else if(b.getAttribute('data-del')){ jobDelete(b.getAttribute('data-del')); }
+      var b = e.target.closest ? e.target.closest('[data-open]') : null;
+      if(b){ stopGeo(); openJob(b.getAttribute('data-open')); }
     });
   }
 
@@ -7169,6 +7403,19 @@
   on('mkHist', 'click', function(){ stopGeo(); paneHistory(); });
   on('mkStat', 'click', function(){ stopGeo(); paneStats(); });
   on('mkBack', 'click', function(){ stopGeo(); paintMenu(); });
+
+  on('jfBack', 'click', function(){
+    /* กลับโดยไม่ทิ้งของ ถ้ามีหัวข้อแล้วก็เก็บให้เลย */
+    if(jobOpen && ($('jfTitle').value || '').trim()){ persistJob(); }
+    jobOpen = null;
+    stopGeo(); paintMenu(); showScreen('menu');
+  });
+  on('jfSave', 'click', saveJobAndBack);
+  on('jfDel',  'click', deleteJob);
+  on('jfIn',   'click', function(){ jobStamp('in'); });
+  on('jfOut',  'click', function(){ jobStamp('out'); });
+  on('jfDesc', 'input', jfCount);
+  on('jfSite', 'change', paintJobStamp);
 
   /* ปุ่มกลับเมนู วางไว้ในแถบบนของฟอร์ม */
   (function(){
