@@ -352,6 +352,58 @@
     background:var(--navy);color:#fff;border:none;border-radius:8px;
     padding:9px 16px;font-family:inherit;font-size:13px;cursor:pointer;
   }
+  .tm-site-row{display:flex;align-items:center;gap:8px;margin:14px 0;}
+  .tm-site-row label{font-size:13px;color:var(--ink);flex:0 0 auto;}
+  .tm-site-row select{flex:1;min-width:0;}
+  .tm-add{
+    flex:0 0 auto;background:var(--lav-bg);border:1px solid var(--lav-line);
+    border-radius:8px;width:38px;height:38px;font-size:19px;color:var(--navy);
+    cursor:pointer;line-height:1;font-family:inherit;
+  }
+  .tm-new{
+    border:1px solid var(--lav-line);border-radius:10px;padding:13px;margin:0 0 14px;
+    background:var(--lav-bg);
+  }
+  .tm-new h4{margin:0 0 9px;font-size:13.5px;color:var(--navy);font-weight:700;}
+  .tm-new label{display:block;font-size:12px;color:var(--ink);margin:9px 0 4px;}
+  .tm-new input{width:100%;font-size:14px;padding:9px 11px;}
+  .tm-new .row{display:flex;gap:8px;margin-top:12px;}
+  .tm-new .row button{flex:1;border-radius:8px;padding:10px;font-family:inherit;font-size:13px;cursor:pointer;}
+  .tm-new .ok{background:var(--navy);color:#fff;border:none;}
+  .tm-new .no{background:#fff;color:var(--ink);border:1px solid var(--lav-line);}
+  .tm-gps{font-size:12px;color:var(--ink-faint);line-height:1.55;margin-top:7px;}
+  .tm-far{
+    background:#FCEBEB;color:#8C2F2F;border-radius:8px;padding:9px 12px;
+    font-size:12.5px;line-height:1.5;margin-bottom:10px;
+  }
+  .tm-near{
+    background:#E6F5EC;color:#1F7248;border-radius:8px;padding:9px 12px;
+    font-size:12.5px;line-height:1.5;margin-bottom:10px;
+  }
+
+  .jb-head{display:flex;align-items:center;gap:8px;margin:0 0 10px;}
+  .jb-head .t{flex:1;font-size:13px;color:var(--ink);}
+  .jb-card{
+    border:1px solid var(--lav-line);border-radius:10px;padding:12px 13px;margin-bottom:9px;
+  }
+  .jb-card.done{background:var(--lav-bg);}
+  .jb-t{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35;}
+  .jb-s{font-size:12px;color:var(--ink-faint);margin-top:2px;}
+  .jb-times{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px;}
+  .jb-cell{background:#F7F8FC;border-radius:8px;padding:8px 9px;text-align:center;}
+  .jb-cl{font-size:10.5px;color:var(--ink-faint);line-height:1.3;}
+  .jb-cv{font-family:'Sora',sans-serif;font-weight:700;font-size:14px;margin-top:3px;color:var(--navy);}
+  .jb-cv.none{color:#C7CBD8;}
+  .jb-act{display:flex;gap:8px;margin-top:11px;}
+  .jb-act button{
+    flex:1;border:none;border-radius:8px;padding:9px;font-family:inherit;
+    font-size:12.5px;font-weight:600;color:#fff;background:#3FAE6A;cursor:pointer;
+  }
+  .jb-act button.out{background:#5F8AA6;}
+  .jb-act button.del{flex:0 0 auto;background:#fff;color:#C94F4F;border:1px solid #F0D2D2;font-weight:400;}
+  .jb-act button:disabled{background:#C7CBD8;cursor:default;}
+  .jb-empty{font-size:12.5px;color:var(--ink-faint);text-align:center;padding:14px 0;line-height:1.6;}
+
   .menu-split{
     font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;
     margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--lav-bg);
@@ -1574,6 +1626,9 @@
 
     <div class="menu-body" id="menuHome">
       <div id="tmPanel"></div>
+
+      <div class="menu-split">บันทึกงาน</div>
+      <div id="jobPanel"></div>
 
       <div class="menu-split">งานรายงาน</div>
       <button type="button" class="menu-main" id="mkNew">
@@ -6454,10 +6509,25 @@
     if(which !== 'form'){ window.scrollTo(0, 0); }
   }
 
-  function paintMenu(){
+  /* เฉพาะแถบชื่อด้านบน เรียกซ้ำได้ ไม่ไปวาดหน้าลงเวลาใหม่ */
+  function paintMenuHead(){
     if(!me) return;
     $('menuAv').textContent = initials(me.name);
     $('menuNm').textContent = me.name;
+
+    var sent = mySent();
+    var today = new Date().toDateString();
+    var nToday = sent.filter(function(r){ return new Date(r.at).toDateString() === today; }).length;
+    var tr = todayRow();
+    var tmTxt = !tr       ? 'ยังไม่ลงเวลาวันนี้'
+              : !tr.outAt ? ('เข้างาน ' + fmtTime(tr.inAt))
+              : (fmtTime(tr.inAt) + ' – ' + fmtTime(tr.outAt));
+    $('menuSub').textContent = tmTxt + ' · รายงานวันนี้ ' + nToday;
+  }
+
+  function paintMenu(){
+    if(!me) return;
+    paintMenuHead();
 
     var sent = mySent();
     var today = new Date().toDateString();
@@ -6467,14 +6537,8 @@
       var d = new Date(r.at); return d.getMonth() === mNow && d.getFullYear() === yNow;
     }).length;
 
-    var tr = todayRow();
-    var tmTxt = !tr       ? 'ยังไม่ลงเวลาวันนี้'
-              : !tr.outAt ? ('เข้างาน ' + fmtTime(tr.inAt))
-              : (fmtTime(tr.inAt) + ' – ' + fmtTime(tr.outAt));
-    $('menuSub').textContent = tmTxt + ' · รายงานวันนี้ ' + nToday;
     $('mkHistN').textContent = sent.length ? (sent.length + ' ฉบับ') : 'ยังไม่มี';
     $('mkStatN').textContent = nMonth + ' ฉบับ';
-
 
     var has = hasDraft();
     $('mkDraftPill').style.display = has ? '' : 'none';
@@ -6483,6 +6547,7 @@
     $('menuHome').style.display = '';
     $('menuSub2').style.display = 'none';
     renderTimePanel();   /* หน้าลงเวลาคือหน้าแรก วาดใหม่ทุกครั้งที่กลับมา */
+    renderJobs();
   }
 
   function openPane(html){
@@ -6626,10 +6691,9 @@
     box.innerHTML = cell('in',  WORK_IN,  r && r.inAt,  r && r.inSite) +
                     cell('out', WORK_OUT, r && r.outAt, r && r.outSite);
 
+    /* ปุ่มเข้างานให้ paintFence เป็นคนคุม เพราะต้องดูระยะจากไซต์ด้วย */
     var hasIn = !!(r && r.inAt), hasOut = !!(r && r.outAt);
-    $('tmIn').disabled     = hasIn;
     $('tmOut').disabled    = !hasIn || hasOut;
-    $('tmIn').textContent  = hasIn  ? 'เข้างานแล้ว' : 'เข้างาน';
     $('tmOut').textContent = hasOut ? 'ออกงานแล้ว' : 'ออกงาน';
   }
 
@@ -6639,16 +6703,24 @@
     list.some(function(r){ if(r.u === u && r.day === k){ row = r; return true; } });
     if(!row){ row = { u:u, day:k }; list.unshift(row); }
 
-    var site = $('tmSite') ? $('tmSite').value : '';
+    var st = currentSite(), d = distToSite();
+    /* กันไว้อีกชั้น เผื่อกดปุ่มก่อนที่ paintFence จะทันปิด */
+    if(kind === 'in' && d !== null && d > GEOFENCE_M){ paintFence(); return; }
+
+    var nm = st ? st.name : '';
     if(kind === 'in'){
-      row.inAt = Date.now(); row.inSite = site;
+      row.inAt = Date.now(); row.inSite = nm; row.inSiteId = st && st.id;
+      row.inDist = d;                    /* null = ตรวจพิกัดไม่ได้ตอนนั้น */
       if(geoNow){ row.inLat = geoNow.lat; row.inLng = geoNow.lng; }
     } else {
-      row.outAt = Date.now(); row.outSite = site;
+      row.outAt = Date.now(); row.outSite = nm; row.outSiteId = st && st.id;
+      row.outDist = d;
       if(geoNow){ row.outLat = geoNow.lat; row.outLng = geoNow.lng; }
     }
     try{ localStorage.setItem(TIME_KEY, JSON.stringify(list.slice(0, 400))); }catch(e){}
     paintTimeTable();
+    paintFence();
+    paintMenuHead();
   }
 
   function startGeo(userAsked){
@@ -6664,6 +6736,7 @@
         d.style.display = '';
         d.textContent = 'ความแม่นยำ ± ' + Math.round(geoNow.acc) + ' ม.';
       }
+      paintFence();   /* ตำแหน่งขยับ ระยะถึงไซต์ก็ต้องคิดใหม่ */
     }, geoFail, {
       enableHighAccuracy: true,
       maximumAge: userAsked ? 0 : 15000,
@@ -6677,18 +6750,289 @@
       geoWatch = null;
     }
     if(tmTick){ clearInterval(tmTick); tmTick = null; }
+    closeNewSite();
+  }
+
+  /* ================== ไซต์งาน ==================
+     ไซต์ = ชื่อ + พิกัดที่ลงทะเบียนไว้ ใช้ตรวจว่าตอนเช็คอินอยู่หน้างานจริงไหม
+     เก็บพิกัดจาก GPS ตอนที่ยืนอยู่ที่นั่น จึงไม่ต้องไปหาละติจูดลองจิจูดเอง */
+  var SITES_KEY = 'mce_sites_v1';
+  var GEOFENCE_M = 200;     /* เช็คอินได้เมื่ออยู่ในระยะนี้จากไซต์ */
+
+  function readSites(){
+    try{
+      var a = JSON.parse(localStorage.getItem(SITES_KEY) || '[]');
+      return Object.prototype.toString.call(a) === '[object Array]' ? a : [];
+    }catch(e){ return []; }
+  }
+  function saveSites(list){
+    try{ localStorage.setItem(SITES_KEY, JSON.stringify(list)); }catch(e){}
+  }
+  function siteById(id){
+    var hit = null;
+    readSites().some(function(x){ if(x.id === id){ hit = x; return true; } });
+    return hit;
+  }
+
+  /* ระยะทางบนผิวโลกระหว่างสองพิกัด หน่วยเมตร (haversine) */
+  function metersBetween(a, b){
+    var R = 6371000, toRad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * toRad, dLon = (b.lng - a.lng) * toRad;
+    var la = a.lat * toRad, lb = b.lat * toRad;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(la) * Math.cos(lb);
+    return Math.round(2 * R * Math.asin(Math.sqrt(h)));
+  }
+
+  function currentSite(){
+    var sel = $('tmSite');
+    return sel ? siteById(sel.value) : null;
+  }
+
+  /* ระยะจากที่ยืนอยู่ถึงไซต์ที่เลือก — null = ยังบอกไม่ได้ */
+  function distToSite(){
+    var st = currentSite();
+    if(!st || !geoNow) return null;
+    return metersBetween(geoNow, st);
+  }
+
+  function siteOptions(){
+    var list = readSites();
+    if(!list.length){
+      return '<option value="">— ยังไม่มีไซต์ กด + เพื่อเพิ่ม —</option>';
+    }
+    return list.map(function(x){
+      return '<option value="' + escapeAttr(x.id) + '">' + escapeHtml(x.name) + '</option>';
+    }).join('');
+  }
+
+  /* ---- กล่องเพิ่มไซต์ ---- */
+  function openNewSite(){
+    var box = $('tmNew');
+    if(!box) return;
+    var listId = 'custNames';
+    var dl = CUST_NAMES.map(function(n){
+      return '<option value="' + escapeAttr(n) + '"></option>';
+    }).join('');
+
+    box.innerHTML =
+      '<h4>เพิ่มไซต์งาน</h4>' +
+      '<label for="nsName">ชื่อไซต์</label>' +
+      '<input type="text" id="nsName" list="' + listId + '" placeholder="เช่น GPF หรือ McEnergy (ออฟฟิศ)">' +
+      '<datalist id="' + listId + '">' + dl + '</datalist>' +
+      '<div class="tm-gps" id="nsGps">—</div>' +
+      '<div class="row">' +
+        '<button type="button" class="no" id="nsCancel">ยกเลิก</button>' +
+        '<button type="button" class="ok" id="nsSave">บันทึกไซต์</button>' +
+      '</div>';
+    box.style.display = '';
+
+    function paintGps(){
+      var g = $('nsGps');
+      if(!g) return;
+      g.innerHTML = geoNow
+        ? ('พิกัดที่จะบันทึก: ' + geoNow.lat.toFixed(6) + ', ' + geoNow.lng.toFixed(6) +
+           '<br>ความแม่นยำ ± ' + Math.round(geoNow.acc) + ' ม.' +
+           (geoNow.acc > 50 ? ' — รอสักครู่ให้แม่นกว่านี้ก่อนบันทึกจะดีกว่า' : ''))
+        : 'ยังอ่านพิกัดไม่ได้ ต้องยืนอยู่ที่ไซต์และเปิดตำแหน่งก่อน จึงจะบันทึกได้';
+    }
+    paintGps();
+    if(nsTick){ clearInterval(nsTick); }
+    nsTick = setInterval(paintGps, 2000);
+
+    on('nsCancel', 'click', closeNewSite);
+    on('nsSave', 'click', function(){
+      var nm = ($('nsName').value || '').trim();
+      if(!nm){ $('nsName').focus(); return; }
+      if(!geoNow){ return; }
+      var list = readSites();
+      list.push({
+        id: 's' + Date.now(),
+        name: nm,
+        lat: geoNow.lat, lng: geoNow.lng, acc: Math.round(geoNow.acc),
+        at: Date.now()
+      });
+      saveSites(list);
+      closeNewSite();
+      var sel = $('tmSite');
+      if(sel){
+        sel.innerHTML = siteOptions();
+        sel.value = list[list.length - 1].id;
+      }
+      paintFence();
+    });
+  }
+
+  var nsTick = null;
+  function closeNewSite(){
+    var box = $('tmNew');
+    if(box){ box.style.display = 'none'; box.innerHTML = ''; }
+    if(nsTick){ clearInterval(nsTick); nsTick = null; }
+  }
+
+  /* ---- แถบบอกว่าอยู่ในระยะหรือยัง + คุมปุ่มเข้างาน ---- */
+  function paintFence(){
+    var bar = $('tmFence');
+    if(!bar) return;
+    var st = currentSite(), d = distToSite();
+
+    if(!st){
+      bar.className = 'tm-far';
+      bar.textContent = 'ยังไม่ได้เลือกไซต์ — กด + เพื่อเพิ่มไซต์ที่ยืนอยู่ตอนนี้';
+      bar.style.display = '';
+    } else if(d === null){
+      bar.className = 'tm-far';
+      bar.textContent = 'ยังอ่านตำแหน่งไม่ได้ จึงตรวจระยะไม่ได้ — ลงเวลาได้ แต่จะถูกบันทึกว่าไม่ได้ตรวจพิกัด';
+      bar.style.display = '';
+    } else if(d > GEOFENCE_M){
+      bar.className = 'tm-far';
+      bar.textContent = 'อยู่นอกพื้นที่ ' + escapeHtml(st.name) + ' — ห่าง ' + d +
+                        ' ม. (เข้างานได้เมื่ออยู่ในระยะ ' + GEOFENCE_M + ' ม.)';
+      bar.style.display = '';
+    } else {
+      bar.className = 'tm-near';
+      bar.textContent = 'อยู่ในพื้นที่ ' + escapeHtml(st.name) + ' — ห่าง ' + d + ' ม.';
+      bar.style.display = '';
+    }
+
+    var dist = $('tmDist');
+    if(dist && d !== null){
+      dist.style.display = '';
+      dist.textContent = 'ระยะห่าง: ' + d + ' ม.';
+    }
+
+    /* ปุ่มเข้างานปิดเมื่อรู้ชัดว่าอยู่นอกระยะ ถ้าอ่านพิกัดไม่ได้ยังกดได้
+       ไม่งั้นช่างที่สัญญาณไม่เข้าจะลงเวลาไม่ได้เลย */
+    var r = todayRow();
+    var blocked = (d !== null && d > GEOFENCE_M) || !st;
+    var bIn = $('tmIn');
+    if(bIn){
+      bIn.disabled = !!(r && r.inAt) || blocked;
+      bIn.textContent = (r && r.inAt) ? 'เข้างานแล้ว' : (blocked ? 'อยู่นอกพื้นที่' : 'เข้างาน');
+    }
+  }
+
+  /* ================== บันทึกงาน (ใบงาน) ==================
+     หนึ่งใบ = หนึ่งงานที่ไปทำ เก็บหัวข้องานกับเวลาสามจุด
+     ไปถึงหน้างาน / เช็คอิน / เช็คเอาท์
+     เช็คอินใช้กติกาเดียวกับลงเวลา คือต้องอยู่ในระยะ 200 ม. จากไซต์ */
+  var JOBS_KEY = 'mce_jobs_v1';
+
+  function readJobs2(){
+    try{
+      var a = JSON.parse(localStorage.getItem(JOBS_KEY) || '[]');
+      return Object.prototype.toString.call(a) === '[object Array]' ? a : [];
+    }catch(e){ return []; }
+  }
+  function saveJobs2(list){
+    try{ localStorage.setItem(JOBS_KEY, JSON.stringify(list.slice(0, 500))); }catch(e){}
+  }
+  function todayJobs(){
+    var u = me ? me.u : '', k = todayKey();
+    return readJobs2().filter(function(j){ return j.u === u && j.day === k; });
+  }
+
+  function jobStamp(id, kind){
+    var list = readJobs2(), hit = null;
+    list.some(function(j){ if(j.id === id){ hit = j; return true; } });
+    if(!hit) return;
+
+    var d = distToSite(), st = currentSite();
+    /* เช็คอินต้องอยู่หน้างานจริง เช็คเอาท์ไม่บังคับ เผื่อเดินออกมาแล้วเพิ่งนึกได้ */
+    if(kind === 'in' && d !== null && d > GEOFENCE_M){
+      alert('อยู่นอกพื้นที่ ' + (st ? st.name : '') + ' — ห่าง ' + d + ' ม.\n' +
+            'เช็คอินได้เมื่ออยู่ในระยะ ' + GEOFENCE_M + ' ม.');
+      return;
+    }
+    if(kind === 'in'){  hit.inAt  = Date.now(); hit.inDist  = d; }
+    else             {  hit.outAt = Date.now(); hit.outDist = d; }
+    saveJobs2(list);
+    renderJobs();
+  }
+
+  function jobDelete(id){
+    if(!confirm('ลบใบงานนี้?')) return;
+    saveJobs2(readJobs2().filter(function(j){ return j.id !== id; }));
+    renderJobs();
+  }
+
+  function addJob(){
+    var st = currentSite();
+    var title = prompt('หัวข้องาน');
+    if(title === null) return;
+    title = title.trim();
+    if(!title) return;
+
+    var list = readJobs2();
+    list.unshift({
+      id: 'j' + Date.now(),
+      u: me ? me.u : '',
+      day: todayKey(),
+      title: title,
+      siteId: st && st.id,
+      siteName: st ? st.name : '',
+      /* กดเพิ่มงานตอนไปถึง จึงบันทึกเวลาไปถึงหน้างานให้เลย */
+      arriveAt: Date.now(),
+      arriveDist: distToSite()
+    });
+    saveJobs2(list);
+    renderJobs();
+  }
+
+  function renderJobs(){
+    var host = $('jobPanel');
+    if(!host) return;
+    var list = todayJobs();
+
+    var head =
+      '<div class="jb-head"><span class="t">งานวันนี้ ' + list.length + ' ใบ</span>' +
+      '<button type="button" class="tm-add" id="jbAdd" title="เพิ่มใบงาน" aria-label="เพิ่มใบงาน">+</button></div>';
+
+    if(!list.length){
+      host.innerHTML = head +
+        '<p class="jb-empty">ยังไม่มีใบงานวันนี้<br>กด + เมื่อไปถึงหน้างาน ระบบจะจดเวลาไปถึงให้</p>';
+      on('jbAdd', 'click', addJob);
+      return;
+    }
+
+    function cell(label, at){
+      return '<div class="jb-cell"><div class="jb-cl">' + label + '</div>' +
+             '<div class="jb-cv' + (at ? '' : ' none') + '">' + (at ? fmtTime(at) : '—') + '</div></div>';
+    }
+
+    host.innerHTML = head + list.map(function(j){
+      var done = !!j.outAt;
+      return '<div class="jb-card' + (done ? ' done' : '') + '">' +
+        '<div class="jb-t">' + escapeHtml(j.title) + '</div>' +
+        '<div class="jb-s">' + escapeHtml(j.siteName || 'ไม่ได้ระบุไซต์') + '</div>' +
+        '<div class="jb-times">' +
+          cell('ไปถึงหน้างาน', j.arriveAt) + cell('เช็คอิน', j.inAt) + cell('เช็คเอาท์', j.outAt) +
+        '</div>' +
+        '<div class="jb-act">' +
+          '<button type="button" data-in="' + j.id + '"' + (j.inAt ? ' disabled' : '') + '>' +
+            (j.inAt ? 'เช็คอินแล้ว' : 'เช็คอิน') + '</button>' +
+          '<button type="button" class="out" data-out="' + j.id + '"' +
+            ((!j.inAt || j.outAt) ? ' disabled' : '') + '>' +
+            (j.outAt ? 'เช็คเอาท์แล้ว' : 'เช็คเอาท์') + '</button>' +
+          '<button type="button" class="del" data-del="' + j.id + '" aria-label="ลบใบงาน">ลบ</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    on('jbAdd', 'click', addJob);
+    host.addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('button') : null;
+      if(!b) return;
+      if(b.getAttribute('data-in'))  { jobStamp(b.getAttribute('data-in'),  'in');  }
+      else if(b.getAttribute('data-out')){ jobStamp(b.getAttribute('data-out'), 'out'); }
+      else if(b.getAttribute('data-del')){ jobDelete(b.getAttribute('data-del')); }
+    });
   }
 
   /* วาดหน้าลงเวลาลงในหน้าแรกเลย ไม่ได้เป็นหน้าย่อยแล้ว */
   function renderTimePanel(){
     var host = $('tmPanel');
     if(!host) return;
-
-    /* รายชื่อพิกัด = ออฟฟิศ + ลูกค้าทั้งหมดที่มีในฟอร์ม */
-    var opts = ['<option value="McEnergy">McEnergy (ออฟฟิศ)</option>'].concat(
-      CUST_NAMES.map(function(nm){
-        return '<option value="' + escapeAttr(nm) + '">' + escapeHtml(nm) + '</option>';
-      })).join('');
 
     host.innerHTML =
       '<div class="tm-map">' +
@@ -6704,8 +7048,12 @@
         '<div class="tm-clock"><div class="tm-hh" id="tmHH">--:--</div>' +
         '<div class="tm-dd" id="tmDD">—</div></div>' +
       '</div>' +
-      '<div class="tm-where"><label for="tmSite">พิกัด</label>' +
-        '<select id="tmSite">' + opts + '</select></div>' +
+      '<div class="tm-site-row"><label for="tmSite">ไซต์</label>' +
+        '<select id="tmSite">' + siteOptions() + '</select>' +
+        '<button type="button" class="tm-add" id="tmAddSite" title="เพิ่มไซต์จากตำแหน่งที่ยืนอยู่" ' +
+          'aria-label="เพิ่มไซต์">+</button></div>' +
+      '<div class="tm-new" id="tmNew" style="display:none;"></div>' +
+      '<div id="tmFence" style="display:none;"></div>' +
       '<div class="tm-btns">' +
         '<button type="button" class="tm-btn" id="tmIn">เข้างาน</button>' +
         '<button type="button" class="tm-btn out" id="tmOut">ออกงาน</button>' +
@@ -6720,7 +7068,12 @@
     tmTick = setInterval(paintClock, 20000);
     $('tmIn').addEventListener('click',  function(){ stamp('in'); });
     $('tmOut').addEventListener('click', function(){ stamp('out'); });
-    $('tmLocate').addEventListener('click', function(){ stopGeo(); askGeo(true); });
+    on('tmLocate', 'click', function(){ stopGeo(); askGeo(true); });
+    on('tmAddSite', 'click', function(){
+      if($('tmNew').style.display === 'none'){ openNewSite(); } else { closeNewSite(); }
+    });
+    on('tmSite', 'change', paintFence);
+    paintFence();
     askGeo(false);
   }
 
