@@ -448,10 +448,10 @@
   .jl-s{font-size:11.5px;color:var(--ink-faint);margin-top:2px;
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-  .menu-split{
-    font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;
-    margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--lav-bg);
-  }
+  /* เส้นคั่นเส้นเดียว แยกหน้าลงเวลาออกจากชุดปุ่มด้านล่าง
+     ไม่มีหัวข้อกำกับแล้ว ตัวปุ่มบอกตัวเองอยู่แล้วว่าคืออะไร */
+  #jobPanel{margin-top:16px;padding-top:16px;border-top:1px solid var(--lav-bg);}
+  #jobPanel + .menu-main{margin-top:12px;}
 
   .emp-other{display:flex;gap:8px;margin-bottom:12px;}
   .emp-other input{flex:1;min-width:0;}
@@ -1741,10 +1741,8 @@
     <div class="menu-body" id="menuHome">
       <div id="tmPanel"></div>
 
-      <div class="menu-split">บันทึกงาน</div>
       <div id="jobPanel"></div>
 
-      <div class="menu-split">งานรายงาน</div>
       <button type="button" class="menu-main" id="mkNew">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/><path d="M12 11v6M9 14h6"/></svg>
         <span style="flex:1;min-width:0;">
@@ -7143,8 +7141,9 @@
     }
     persistJob();
     jobOpen = null;
-    paintMenu();
+    paintMenuHead();
     showScreen('menu');
+    paneJobs();
   }
 
   function deleteJob(){
@@ -7153,8 +7152,9 @@
     var id = jobOpen.id;
     saveJobs2(readJobs2().filter(function(x){ return x.id !== id; }));
     jobOpen = null;
-    paintMenu();
+    paintMenuHead();
     showScreen('menu');
+    paneJobs();
   }
 
   /* ---- เวลาเข้าสถานที่ ในใบงาน ---- */
@@ -7215,13 +7215,13 @@
     paintJobStamp();
   }
 
-  /* ---- รายการใบงานบนหน้าแรก ---- */
+  /* ---- หน้าแรกโชว์แค่ปุ่มเดียว ไม่แสดงรายการ ---- */
   function renderJobs(){
     var host = $('jobPanel');
     if(!host) return;
-    var list = todayJobs();
+    var n = todayJobs().length;
 
-    var head =
+    host.innerHTML =
       '<button type="button" class="menu-main warn" id="jbAdd">' +
         '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
           'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
@@ -7229,9 +7229,9 @@
           '<path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/>' +
           '<path d="M12 11v6M9 14h6"/></svg>' +
         '<span style="flex:1;min-width:0;">' +
-          '<span class="mt" style="display:block;">เปิดใบงานใหม่</span>' +
+          '<span class="mt" style="display:block;">บันทึกงาน</span>' +
           '<span class="ms" style="display:block;">' +
-            (list.length ? ('งานวันนี้ ' + list.length + ' ใบ') : 'ยังไม่มีใบงานวันนี้') +
+            (n ? ('งานวันนี้ ' + n + ' ใบ') : 'ยังไม่มีใบงานวันนี้') +
           '</span>' +
         '</span>' +
         '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
@@ -7239,8 +7239,26 @@
           '<path d="M9 6l6 6-6 6"/></svg>' +
       '</button>';
 
-    host.innerHTML = head + (list.length
-      ? '<div style="margin-top:10px;">' + list.map(function(j){
+    on('jbAdd', 'click', function(){ stopGeo(); paneJobs(); });
+  }
+
+  /* ---- หน้ารายการใบงาน อยู่หลังปุ่มบันทึกงาน ---- */
+  function paneJobs(){
+    var list = todayJobs();
+
+    var top =
+      '<button type="button" class="menu-main warn" id="jpNew" style="margin-bottom:6px;">' +
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" ' +
+          'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M12 5v14M5 12h14"/></svg>' +
+        '<span style="flex:1;min-width:0;">' +
+          '<span class="mt" style="display:block;">เปิดใบงานใหม่</span>' +
+          '<span class="ms" style="display:block;">บันทึกงานที่หน้างาน</span>' +
+        '</span>' +
+      '</button>';
+
+    var rows = list.length
+      ? list.map(function(j){
           var cls = j.outAt ? 'done' : (j.inAt ? 'on' : '');
           var bits = [];
           if(j.siteName){ bits.push(j.siteName); }
@@ -7253,13 +7271,16 @@
             '<span class="menu-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" ' +
               'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
               '<path d="M9 6l6 6-6 6"/></svg></span></button>';
-        }).join('') + '</div>'
-      : '');
+        }).join('')
+      : '<p style="font-size:12.5px;color:var(--ink-faint);text-align:center;padding:20px 0;line-height:1.6;">' +
+        'ยังไม่มีใบงานวันนี้</p>';
 
-    on('jbAdd', 'click', function(){ stopGeo(); openJob(null); });
-    host.addEventListener('click', function(e){
+    openPane(top + '<div style="margin-top:10px;">' + rows + '</div>');
+
+    on('jpNew', 'click', function(){ openJob(null); });
+    $('menuPane').addEventListener('click', function(e){
       var b = e.target.closest ? e.target.closest('[data-open]') : null;
-      if(b){ stopGeo(); openJob(b.getAttribute('data-open')); }
+      if(b){ openJob(b.getAttribute('data-open')); }
     });
   }
 
@@ -7408,7 +7429,10 @@
     /* กลับโดยไม่ทิ้งของ ถ้ามีหัวข้อแล้วก็เก็บให้เลย */
     if(jobOpen && ($('jfTitle').value || '').trim()){ persistJob(); }
     jobOpen = null;
-    stopGeo(); paintMenu(); showScreen('menu');
+    stopGeo();
+    paintMenuHead();
+    showScreen('menu');
+    paneJobs();       /* กลับไปที่รายการใบงาน ไม่ใช่หน้าแรก */
   });
   on('jfSave', 'click', saveJobAndBack);
   on('jfDel',  'click', deleteJob);
