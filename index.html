@@ -296,17 +296,11 @@
   .ld-row{display:flex;align-items:center;justify-content:center;max-width:100%;}
   /* ห้ามใส่ var() ใน steps() เบราว์เซอร์อ่านไม่ออก ทั้งบรรทัด animation จะเสีย
      ชื่อเลยไม่พิมพ์เลย  ตอนนี้ให้ JS เป็นคนสั่ง animation หลังวัดความกว้างเสร็จ */
+  /* แสดงชื่อเฉย ๆ ไม่ต้องมีเอฟเฟกต์พิมพ์ทีละตัว */
   .ld-nm{
-    overflow:hidden;white-space:nowrap;color:#F5C518;
-    font-size:19px;font-weight:700;font-family:'Sora',sans-serif;line-height:1.4;
-    width:0;
+    color:#F5C518;font-size:20px;font-weight:700;
+    font-family:'Sora',sans-serif;line-height:1.4;text-align:center;
   }
-  @keyframes ldType{ 0%,15%{width:0;} 75%,100%{width:var(--w,10em);} }
-  .ld-car{
-    width:2px;height:22px;background:#F5C518;margin-left:3px;flex:0 0 auto;
-    animation:ldCar .6s step-end infinite;
-  }
-  @keyframes ldCar{ 50%{opacity:0;} }
   .ld-tail{color:rgba(255,255,255,.45);font-size:12.5px;}
 
   /* ---- หน้าเมนู ---- */
@@ -325,7 +319,6 @@
   }
   .menu-av img{width:100%;height:100%;object-fit:cover;}
   .menu-nm{font-size:14.5px;color:#fff;font-weight:600;}
-  .menu-sub{font-size:11.5px;color:rgba(255,255,255,.62);margin-top:2px;}
   .menu-out{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:6px;line-height:0;}
   .menu-body{background:#fff;border-radius:0 0 12px 12px;padding:14px 14px 18px;}
   .menu-main{
@@ -532,7 +525,12 @@
     display:flex;flex-direction:column;overflow-y:auto;
   }
   .dw.on{transform:none;}
-  .dw-top{background:var(--navy);padding:26px 20px 20px;color:#fff;}
+  /* ลิ้นชักเริ่มที่ top:0 ซึ่งตอนนี้อยู่ใต้รอยบาก รูปกับชื่อจึงโดนแถบสถานะบังไว้
+     เว้นที่เพิ่มเท่าความสูงรอยบาก สีกรมท่าก็ยังเต็มถึงขอบบนสุดเหมือนเดิม */
+  .dw-top{
+    background:var(--navy);color:#fff;
+    padding:calc(26px + env(safe-area-inset-top,0px)) 20px 20px;
+  }
   .dw-av{
     width:88px;height:88px;border-radius:50%;background:#E4568E;
     display:flex;align-items:center;justify-content:center;overflow:hidden;
@@ -1988,16 +1986,6 @@
       <div class="dw-sec">การอนุมัติ</div>
       <button type="button" class="dw-i soon" data-dw="apTime"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M5 3L2.5 5.5M19 3l2.5 2.5"/></svg></span><span class="g">อนุมัติลงเวลา</span><span style="font-size:11.5px;color:#C7CBD8;">เร็ว ๆ นี้</span></button>
       <button type="button" class="dw-i soon" data-dw="apLeave"><span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l18-5-7 17-2.5-6.5z"/><path d="M15 18l2 2 4-4"/></svg></span><span class="g">อนุมัติการลา</span><span style="font-size:11.5px;color:#C7CBD8;">เร็ว ๆ นี้</span></button>
-    <div class="dw-sec">ทดลองใช้งาน</div>
-    <button type="button" class="dw-i" data-dw="demoOn">
-      <span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9z"/></svg></span>
-      <span class="g">ใส่ข้อมูลตัวอย่าง</span>
-    </button>
-    <button type="button" class="dw-i" data-dw="demoOff">
-      <span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg></span>
-      <span class="g">ล้างข้อมูลทดลอง</span>
-    </button>
-
     <div class="dw-sec"></div>
     <button type="button" class="dw-i" data-dw="logout" style="color:#C94F4F;">
       <span class="ic" style="color:#C94F4F;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
@@ -2051,7 +2039,7 @@
       </div>
     </div>
     <div class="ld-lead">กำลังเข้าสู่ระบบ โปรดคุณ</div>
-    <div class="ld-row"><span class="ld-nm" id="ldNm"></span><i class="ld-car"></i></div>
+    <div class="ld-row"><span class="ld-nm" id="ldNm"></span></div>
     <div class="ld-tail">รอสักครู่…</div>
   </div>
 </div>
@@ -2064,7 +2052,6 @@
       <span class="menu-av" id="menuAv">—</span>
       <div style="flex:1;min-width:0;">
         <div class="menu-nm" id="menuNm">—</div>
-        <div class="menu-sub" id="menuSub">—</div>
       </div>
     </div>
 
@@ -6882,7 +6869,7 @@
      อ่านเลขเวอร์ชันจาก sw.js ที่บั๊มอยู่แล้วทุกรอบที่แก้ไฟล์
      จึงมีเลขเดียวให้ดูแล ไม่มีทางลืมบั๊กอีกตัวจนหลุด
      อ่านไม่ได้ (ไม่มีเน็ต) ก็ไม่เตะใครออก ใช้ของเดิมต่อไป */
-  var APP_VER = 'mce-report-3.7.1';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
+  var APP_VER = 'mce-report-3.8.1';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
   var curVer  = null;
 
   var AUTH_KEY = 'mce_auth_v1';
@@ -6896,6 +6883,30 @@
       if(d.exp && Date.now() > d.exp){ localStorage.removeItem(AUTH_KEY); return null; }
       return d;
     }catch(e){ return null; }
+  }
+
+  /* ล้างข้อมูลที่ใส่ไว้ตอนทดลองออกจากเครื่องช่างให้หมด
+     ทุกรายการที่สร้างจากโหมดทดลองติดธง demo:true ไว้
+     ของที่ช่างกรอกเองไม่มีธงนี้ จึงไม่ถูกแตะ */
+  function purgeDemo(){
+    try{
+      var keys = [
+        ['mce_sites_v1',    'ไซต์'],
+        ['mce_timelog_v1',  'ลงเวลา'],
+        ['mce_jobs_v1',     'ใบงาน'],
+        ['mce_requests_v1', 'ใบขออนุมัติ']
+      ];
+      keys.forEach(function(k){
+        var raw = localStorage.getItem(k[0]);
+        if(!raw) return;
+        var a = JSON.parse(raw);
+        if(Object.prototype.toString.call(a) !== '[object Array]') return;
+        var keep = a.filter(function(x){ return !(x && x.demo); });
+        if(keep.length !== a.length){
+          localStorage.setItem(k[0], JSON.stringify(keep));
+        }
+      });
+    }catch(e){}
   }
 
   function forceLogout(msg){
@@ -6929,7 +6940,10 @@
 
   function checkVersion(){
     try{
-      fetch('./sw.js', { cache:'reload' })
+      /* ต่อท้ายด้วยเลขเวลา ทำให้ลิงก์ไม่ซ้ำเดิม
+         เครื่องที่ยังใช้ Service Worker ตัวเก่าอยู่จะหาในแคชไม่เจอ
+         แล้ววิ่งไปเอาจากเน็ตแทน ได้เลขเวอร์ชันจริง */
+      fetch('./sw.js?v=' + Date.now(), { cache:'reload' })
         .then(function(r){ return r.text(); })
         .then(function(t){
           var m = /CACHE_VERSION\s*=\s*'([^']+)'/.exec(t);
@@ -7024,15 +7038,6 @@
     $('menuAv').innerHTML   = avatarHtml();
     var pf = myProf();
     $('menuNm').textContent = me.name + (pf.empId ? '  (' + pf.empId + ')' : '');
-
-    var sent = mySent();
-    var today = new Date().toDateString();
-    var nToday = sent.filter(function(r){ return new Date(r.at).toDateString() === today; }).length;
-    var tr = todayRow();
-    var tmTxt = !tr       ? 'ยังไม่ลงเวลาวันนี้'
-              : !tr.outAt ? ('เข้างาน ' + fmtTime(tr.inAt))
-              : (fmtTime(tr.inAt) + ' – ' + fmtTime(tr.outAt));
-    $('menuSub').textContent = tmTxt + ' · รายงานวันนี้ ' + nToday;
   }
 
   function paintMenu(){
@@ -7613,117 +7618,11 @@
     }
     stopGeo();
     if(k === 'logout'){ doLogout(); return; }
-    if(k === 'demoOn'){ seedDemo(); return; }
-    if(k === 'demoOff'){ wipeDemo(); return; }
     if(k === 'profile'){ paneProfile(); }
     else if(k === 'people'){ panePeople(); }
     else if(k === 'daily'){ paneStats(); }
     else if(k === 'askOT'){ paneReqs(); }
   });
-
-  /* ================== โหมดทดลอง ==================
-     ใส่ข้อมูลตัวอย่างให้ครบทุกหน้า จะได้ลองกดดูได้เลยโดยไม่ต้องนั่งกรอกเอง
-     ข้อมูลทดลองติดธง demo:true ไว้ ล้างทีเดียวหมด ไม่ปนกับของจริง */
-  function seedDemo(){
-    if(!me){ return; }
-    if(!confirm('ใส่ข้อมูลตัวอย่างสำหรับทดลอง?\n\nจะเพิ่มไซต์ ใบงาน ใบขออนุมัติ และประวัติลงเวลา 14 วันย้อนหลัง')) return;
-
-    var base = geoNow ? geoNow : { lat: 13.8290, lng: 100.6410 };   /* แถวรามอินทรา */
-    function off(m, brg){
-      var R = 6378137, b = brg * Math.PI / 180;
-      return {
-        lat: base.lat + (m * Math.cos(b)) / R * 180 / Math.PI,
-        lng: base.lng + (m * Math.sin(b)) / (R * Math.cos(base.lat * Math.PI / 180)) * 180 / Math.PI
-      };
-    }
-
-    /* ---- ไซต์ ---- */
-    var sites = readSites().filter(function(x){ return !x.demo; });
-    [['McEnergy', 'office', 0, 0],
-     ['GPF', 'customer', 900, 40],
-     ['NXP', 'customer', 2400, 120],
-     ['Standard CAN', 'customer', 4100, 220],
-     ['AMARI DMK', 'customer', 6800, 310]].forEach(function(a, i){
-      var c = a[2] ? off(a[2], a[3]) : base;
-      sites.push({ id:'sd' + i, name:a[0], kind:a[1], lat:c.lat, lng:c.lng,
-                   acc:8, at:Date.now(), demo:true });
-    });
-    saveSites(sites);
-
-    /* ---- ลงเวลา 14 วันย้อนหลัง ---- */
-    var log = readTimeLog().filter(function(r){ return !r.demo; });
-    for(var k = 14; k >= 1; k--){
-      var d = new Date(); d.setDate(d.getDate() - k);
-      var dow = d.getDay();
-      if(dow === 0 || dow === 6) continue;          /* หยุดเสาร์อาทิตย์ */
-      if(k === 4 || k === 9) continue;              /* เว้นไว้ให้เห็นวันขาด */
-      var late = (k === 6 || k === 11);
-      var inH = late ? 8 : 7, inM = late ? (18 + k % 20) : (48 + k % 10);
-      var din = new Date(d); din.setHours(inH, inM, 0, 0);
-      var dout = new Date(d); dout.setHours(17, 20 + (k % 30), 0, 0);
-      log.push({ u: me.u, day: d.toDateString(), demo:true,
-                 inAt: din.getTime(),  inSite:'McEnergy',  inDist: 12 + (k % 40), inOK:true,
-                 outAt: dout.getTime(), outSite:'McEnergy', outDist: 15 + (k % 30), outOK:true });
-    }
-    try{ localStorage.setItem(TIME_KEY, JSON.stringify(log)); }catch(e){}
-
-    /* ---- ใบงานวันนี้ ---- */
-    var jobs = readJobs2().filter(function(j){ return !j.demo; });
-    var t0 = Date.now();
-    [['Service chiller CH-01', 'GPF', 'done', 3],
-     ['คุมผู้รับเหมาเปลี่ยน Infill', 'NXP', 'doing', 1]].forEach(function(a, i){
-      jobs.unshift({
-        id:'jd' + i, u:me.u, day:todayKey(), demo:true,
-        title:a[0], proj:a[1], siteName:a[1], status:a[2],
-        desc:'งานตัวอย่างสำหรับทดลองใช้งาน',
-        arriveAt: t0 - a[3] * 36e5, arriveDist: 20, arriveOK:true,
-        inAt: t0 - (a[3] * 36e5 - 6e5), inDist: 18, inOK:true,
-        outAt: a[2] === 'done' ? (t0 - 18e5) : null,
-        start: '', end: '', ref: ''
-      });
-    });
-    saveJobs2(jobs);
-
-    /* ---- ใบขออนุมัติ ---- */
-    var reqs = readReqs().filter(function(r){ return !r.demo; });
-    reqs.unshift({ id:'rd0', u:me.u, demo:true, type:'ot', at:t0 - 864e5, status:'pending',
-                   date: d10(new Date(t0 - 864e5)), start:'17:00', end:'20:30', hours:3.5,
-                   site:'GPF', note:'เก็บงานเดินท่อให้จบก่อนส่งมอบ' });
-    reqs.unshift({ id:'rd1', u:me.u, demo:true, type:'perdiem', at:t0 - 2 * 864e5, status:'pending',
-                   date: d10(new Date(t0 - 2 * 864e5)), days:2, site:'AMARI DMK',
-                   note:'ค้างคืนหน้างาน 2 วัน' });
-    reqs.unshift({ id:'rd2', u:me.u, demo:true, type:'leave', at:t0 - 3 * 864e5, status:'pending',
-                   kind:'personal', from: d10(new Date(t0 + 5 * 864e5)),
-                   to: d10(new Date(t0 + 6 * 864e5)), days:2, note:'ธุระครอบครัว' });
-    saveReqs(reqs);
-
-    /* ---- โปรไฟล์ ---- */
-    var pf = myProf();
-    if(!pf.empId){
-      pf.nick = pf.nick || me.name.split(' ')[0];
-      pf.empId = '100024';
-      pf.team = 'ทีม Chiller A';
-      saveProf(pf);
-    }
-
-    siteManual = false;
-    alert('ใส่ข้อมูลตัวอย่างแล้ว\n\nไซต์ 5 แห่ง · ลงเวลา 14 วัน · ใบงาน 2 ใบ · ใบขออนุมัติ 3 ใบ');
-    paintMenu();
-  }
-
-  function wipeDemo(){
-    if(!confirm('ล้างเฉพาะข้อมูลตัวอย่าง?\n\nของที่กรอกเองจะไม่ถูกลบ')) return;
-    saveSites(readSites().filter(function(x){ return !x.demo; }));
-    try{
-      localStorage.setItem(TIME_KEY,
-        JSON.stringify(readTimeLog().filter(function(r){ return !r.demo; })));
-    }catch(e){}
-    saveJobs2(readJobs2().filter(function(j){ return !j.demo; }));
-    saveReqs(readReqs().filter(function(r){ return !r.demo; }));
-    siteId = ''; siteManual = false;
-    alert('ล้างข้อมูลตัวอย่างแล้ว');
-    paintMenu();
-  }
 
   /* ---- หน้าโปรไฟล์ ---- */
   function paneProfile(){
@@ -8861,18 +8760,6 @@
     var nm = me ? me.name : '';
     el.textContent = nm;
 
-    /* วัดความกว้างจริงของชื่อก่อน แล้วให้อนิเมชันพิมพ์วิ่งไปหยุดตรงนั้นพอดี
-       ชื่อยาวสั้นไม่เท่ากัน ถ้าตั้งตายตัวจะพิมพ์ไม่จบหรือค้างว่างท้ายบรรทัด */
-    el.style.animation = 'none';
-    el.style.width = 'auto';
-    var w = el.scrollWidth;
-    el.style.width = '';
-    el.style.setProperty('--w', w + 'px');
-
-    /* บังคับให้เบราว์เซอร์คิดใหม่ ไม่งั้นเปิดหน้านี้รอบสองอนิเมชันจะไม่เล่นซ้ำ */
-    void el.offsetWidth;
-    el.style.animation = 'ldType 5s steps(' + Math.max(8, nm.length) + ', end) 1 both';
-
     showScreen('load');
     if(loadTimer){ clearTimeout(loadTimer); }
     loadTimer = setTimeout(function(){
@@ -8949,6 +8836,7 @@
   }
 
   /* ---- init ---- */
+  purgeDemo();                     /* ล้างข้อมูลที่ใส่ไว้ตอนทดลองทิ้ง */
   checkVersion();                  /* โค้ดเปลี่ยน = ให้ทุกคนล็อกอินใหม่ */
   syncTime();                      /* เทียบนาฬิกากับเซิร์ฟเวอร์ก่อนอย่างอื่น */
   setInterval(syncTime, 600000);   /* แล้วเทียบซ้ำทุก 10 นาที */
