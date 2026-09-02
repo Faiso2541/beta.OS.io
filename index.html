@@ -261,6 +261,38 @@
   }
   .auth-err.on{display:block;}
 
+  /* ---- หน้ากำลังเข้าสู่ระบบ ----
+     สายฟ้าโคจรรอบวงแล้วดิ่งเข้าที่ พร้อมชื่อพิมพ์ทีละตัว จบพร้อมกันที่ 5 วินาที
+     ตั้ง 5 วิเพราะชื่อบางคนยาว ต้องมีเวลาพิมพ์จนจบ */
+  #loadScreen{background:var(--navy);}
+  .ld-mid{
+    min-height:100%;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:22px;padding:24px 18px;
+  }
+  .ld-mark{position:relative;width:104px;height:104px;}
+  .ld-mark svg{position:absolute;inset:0;width:104px;height:104px;overflow:visible;}
+  .ld-orbit{position:absolute;inset:0;animation:ldOrbit 5s cubic-bezier(.4,.1,.3,1) infinite;}
+  @keyframes ldOrbit{
+    0%   { transform:rotate(0)      translateX(62px) rotate(0);      opacity:0; }
+    10%  { opacity:1; }
+    62%  { transform:rotate(320deg) translateX(62px) rotate(-320deg); }
+    78%,100%{ transform:rotate(320deg) translateX(0) rotate(-320deg); opacity:1; }
+  }
+  .ld-lead{color:rgba(255,255,255,.72);font-size:13.5px;}
+  .ld-row{display:flex;align-items:center;justify-content:center;max-width:100%;}
+  .ld-nm{
+    overflow:hidden;white-space:nowrap;color:#F5C518;
+    font-size:19px;font-weight:700;font-family:'Sora',sans-serif;line-height:1.4;
+    width:0;animation:ldType 5s steps(var(--n,12)) infinite;
+  }
+  @keyframes ldType{ 0%,15%{width:0;} 75%,100%{width:var(--w,10em);} }
+  .ld-car{
+    width:2px;height:22px;background:#F5C518;margin-left:3px;flex:0 0 auto;
+    animation:ldCar .6s step-end infinite;
+  }
+  @keyframes ldCar{ 50%{opacity:0;} }
+  .ld-tail{color:rgba(255,255,255,.45);font-size:12.5px;}
+
   /* ---- หน้าเมนู ---- */
   /* เต็มความกว้างจอ ไม่บีบเป็นคอลัมน์กลาง
      บนจอกว้างค่อยหยุดที่ 760px ไม่งั้นแถวเมนูจะยืดจนอ่านลำบาก */
@@ -1984,6 +2016,27 @@
     </span>
   </div>
   <div class="jf-wrap" id="rqBody"></div>
+</div>
+
+<!-- ============ หน้ากำลังเข้าสู่ระบบ ============ -->
+<div class="scr" id="loadScreen">
+  <div class="ld-mid">
+    <div class="ld-mark">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <path d="M150 146A72 72 0 1 1 150 54" fill="none" stroke="#12409B" stroke-width="26" stroke-linecap="round"/>
+        <path d="M56 142L78 66h22l-22 76z" fill="#1E8B3E"/>
+        <path d="M92 142L114 66h22l-22 76z" fill="#3AB258"/>
+      </svg>
+      <div class="ld-orbit">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <path d="M150 60L104 122h30l-22 62 70-80h-34l22-44z" fill="#FCC800"/>
+        </svg>
+      </div>
+    </div>
+    <div class="ld-lead">กำลังเข้าสู่ระบบ โปรดคุณ</div>
+    <div class="ld-row"><span class="ld-nm" id="ldNm"></span><i class="ld-car"></i></div>
+    <div class="ld-tail">รอสักครู่…</div>
+  </div>
 </div>
 
 <!-- ============ หน้าเมนู ============ -->
@@ -6891,6 +6944,7 @@
   function showScreen(which){
     $('authScreen').classList.toggle('on', which === 'auth');
     $('menuScreen').classList.toggle('on', which === 'menu');
+    $('loadScreen').classList.toggle('on', which === 'load');
     $('jobScreen').classList.toggle('on',  which === 'job');
     $('reqScreen').classList.toggle('on',  which === 'req');
     document.body.classList.toggle('gated', which !== 'form');
@@ -8730,15 +8784,41 @@
       }));
     }catch(e){}
     $('authPass').value = '';
-    paintMenu();
-    showScreen('menu');
+    runLoading();
   });
+
+  /* หน้ากำลังเข้าสู่ระบบ 5 วินาที แล้วค่อยเข้าเมนู
+     ขึ้นเฉพาะตอนกรอกรหัสเข้ามาจริง ๆ ไม่ขึ้นตอนเปิดแอปที่จำการเข้าใช้งานไว้
+     ไม่งั้นช่างต้องรอ 5 วิทุกครั้งที่เปิดแอป */
+  var loadTimer = null;
+  function runLoading(){
+    var el = $('ldNm');
+    var nm = me ? me.name : '';
+    el.textContent = nm;
+
+    /* วัดความกว้างจริงของชื่อ แล้วให้อนิเมชันพิมพ์วิ่งไปถึงเท่านั้นพอดี
+       ชื่อยาวสั้นไม่เท่ากัน ถ้าตั้งค่าตายตัวจะพิมพ์ไม่จบหรือค้างว่าง */
+    el.style.width = 'auto';
+    var w = el.scrollWidth;
+    el.style.removeProperty('width');
+    el.style.setProperty('--w', w + 'px');
+    el.style.setProperty('--n', Math.max(6, nm.length));
+
+    showScreen('load');
+    if(loadTimer){ clearTimeout(loadTimer); }
+    loadTimer = setTimeout(function(){
+      loadTimer = null;
+      paintMenu();
+      showScreen('menu');
+    }, 5000);
+  }
 
   on('menuHead', 'click', dwOpen);
 
   function doLogout(){
     confirmBox('ยืนยันออกจากระบบ?', function(){
       stopGeo(); dwClose();
+      if(loadTimer){ clearTimeout(loadTimer); loadTimer = null; }
       try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
       me = null;
       $('authUser').value = ''; $('authPass').value = '';
