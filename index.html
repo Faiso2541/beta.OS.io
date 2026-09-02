@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>McEnergy | Service &amp; Maintenance Report</title>
 <meta name="description" content="แบบฟอร์มรายงานตรวจสอบและบำรุงรักษาอุปกรณ์ออนไลน์ — McEnergy Evolution Co., Ltd.">
-<meta name="theme-color" content="#16264A">
+<meta name="theme-color" content="#F4F5FB">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=Chakra+Petch:wght@700&display=swap" rel="stylesheet">
@@ -226,16 +226,19 @@
      เดิมไม่ได้กำหนดอะไรไว้ เบราว์เซอร์เลยหยิบสีจากอะไรก็ได้ที่อยู่บนสุดตอนนั้น
      บางหน้าเลยได้ขาว บางหน้าได้กรมท่า บางหน้าได้ดำ
      ตอนนี้ปูกรมท่าไว้ทุกหน้าเท่ากันหมด และเว้นที่ไม่ให้เนื้อหามุดใต้รอยบาก */
-  html{background:var(--navy);}
+  html{background:var(--page);}
   .scr{
     position:fixed;inset:0;z-index:400;overflow-y:auto;display:none;
     background:var(--page);box-sizing:border-box;
     padding-top:env(safe-area-inset-top,0px);
   }
+  /* แถบรอยบากใช้สีเดียวกับพื้นของหน้านั้น หน้าเมนูจึงได้ขาว
+     ส่วนหน้าล็อกอินกับหน้ากำลังเข้าระบบเป็นกรมท่า จึงเขียนทับด้านล่าง */
   .scr::before{
     content:'';position:fixed;top:0;left:0;right:0;z-index:3;
-    height:env(safe-area-inset-top,0px);background:var(--navy);
+    height:env(safe-area-inset-top,0px);background:var(--page);
   }
+  #authScreen::before,#loadScreen::before{background:var(--navy);}
   .scr.on{display:block;}
   body.gated{overflow:hidden;}
 
@@ -307,12 +310,11 @@
   /* เต็มความกว้างจอ ไม่บีบเป็นคอลัมน์กลาง
      บนจอกว้างค่อยหยุดที่ 760px ไม่งั้นแถวเมนูจะยืดจนอ่านลำบาก */
   .menu-wrap{max-width:760px;margin:0 auto;padding:14px 14px 40px;}
-  @media (max-width:820px){ .menu-wrap{max-width:none;padding:0 12px 40px;} }
+  @media (max-width:820px){ .menu-wrap{max-width:none;padding:12px 12px 40px;} }
   .menu-head{
-    background:var(--navy);border-radius:0 0 0 0;padding:16px;
+    background:var(--navy);border-radius:12px 12px 0 0;padding:16px;
     display:flex;align-items:center;gap:12px;
   }
-  @media (min-width:821px){ .menu-head{border-radius:12px 12px 0 0;} }
   .menu-av{
     width:38px;height:38px;border-radius:50%;background:#E4568E;color:#fff;overflow:hidden;
     font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
@@ -483,6 +485,7 @@
   .cf-ic{
     width:56px;height:56px;border-radius:50%;background:#3FAE6A;color:#fff;
     display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+    border:1px solid rgba(20,25,40,.07);
   }
   .cf-t{font-size:17px;font-weight:700;color:#3FAE6A;font-family:'Sora',sans-serif;}
   .cf-m{font-size:13.5px;color:var(--ink-faint);margin-top:6px;line-height:1.5;}
@@ -1994,13 +1997,30 @@
   </div>
 </aside>
 
+<!-- ============ กล่องแจ้งอัปเดต ============ -->
+<div class="cf-mask" id="upMask" style="z-index:540;">
+  <div class="cf-box" role="alertdialog" aria-labelledby="upT">
+    <div class="cf-ic" style="background:#2C6E8F;" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+           stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg>
+    </div>
+    <div class="cf-t" id="upT" style="color:#2C6E8F;">มีการอัปเดต</div>
+    <div class="cf-m">ระบบมีเวอร์ชันใหม่<br>กรุณาเข้าสู่ระบบอีกครั้ง</div>
+    <div style="margin-top:20px;">
+      <button type="button" id="upOut"
+        style="width:100%;border:none;border-radius:22px;padding:12px;font-family:inherit;
+               font-size:14px;font-weight:600;color:#fff;background:#C94F4F;cursor:pointer;">
+        ออกจากระบบ
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ กล่องยืนยันการทำรายการ ============ -->
 <div class="cf-mask" id="cfMask">
   <div class="cf-box" role="alertdialog" aria-labelledby="cfT">
-    <div class="cf-ic" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor"
-           stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-    </div>
+    <div class="cf-ic" id="cfIc" aria-hidden="true"></div>
     <div class="cf-t" id="cfT">ยืนยันการทำรายการ</div>
     <div class="cf-m" id="cfM">—</div>
     <div class="cf-go">
@@ -6869,7 +6889,7 @@
      อ่านเลขเวอร์ชันจาก sw.js ที่บั๊มอยู่แล้วทุกรอบที่แก้ไฟล์
      จึงมีเลขเดียวให้ดูแล ไม่มีทางลืมบั๊กอีกตัวจนหลุด
      อ่านไม่ได้ (ไม่มีเน็ต) ก็ไม่เตะใครออก ใช้ของเดิมต่อไป */
-  var APP_VER = 'mce-report-3.8.1';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
+  var APP_VER = 'mce-report-3.9.0';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
   var curVer  = null;
 
   var AUTH_KEY = 'mce_auth_v1';
@@ -6922,21 +6942,38 @@
     showScreen('auth');
   }
 
-  /* รู้เวอร์ชันปัจจุบันแล้ว เทียบกับที่ค้างอยู่ในเครื่อง */
-  function noteVer(v){
-    curVer = v;
-    var d = readAuth();
-    if(!d) return;
-    if(!d.ver){
-      /* ล็อกอินไปก่อนที่จะรู้เวอร์ชัน เติมให้ ไม่ต้องเตะออก */
-      d.ver = v;
-      try{ localStorage.setItem(AUTH_KEY, JSON.stringify(d)); }catch(e){}
+  /* ---- เตือนเมื่อมีการอัปเดต ----
+     เก็บคู่เลขไว้สองตัว: เลขในไฟล์ index (APP_VER) กับเลขใน sw.js
+     ถ้าตัวใดตัวหนึ่งไม่ตรงกับที่เคยเห็น แปลว่ามีการอัปไฟล์ใหม่
+     ครอบคลุมกรณีอัปแค่ไฟล์เดียว ซึ่งเป็นเหตุที่รอบก่อนไม่ทำงาน */
+  var SEEN_KEY = 'mce_seen_ver_v1';
+
+  function showUpdate(){
+    $('upMask').classList.add('on');
+  }
+
+  function noteVer(swVer){
+    curVer = swVer;
+    var now = APP_VER + '|' + (swVer || '');
+    var seen = null;
+    try{ seen = localStorage.getItem(SEEN_KEY); }catch(e){}
+
+    if(!seen){
+      /* เพิ่งเคยเห็นครั้งแรก จำไว้เฉย ๆ ไม่ต้องเตะใครออก */
+      try{ localStorage.setItem(SEEN_KEY, now); }catch(e){}
       return;
     }
-    if(d.ver !== v){
-      forceLogout('ระบบมีการอัปเดต กรุณาเข้าใช้งานใหม่อีกครั้ง');
-    }
+    if(seen === now) return;
+
+    /* เลขเปลี่ยน = มีของใหม่ จำเลขใหม่ไว้ แล้วบอกผู้ใช้ */
+    try{ localStorage.setItem(SEEN_KEY, now); }catch(e){}
+    if(readAuth()){ showUpdate(); }
   }
+
+  on('upOut', 'click', function(){
+    $('upMask').classList.remove('on');
+    forceLogout('ระบบมีการอัปเดต กรุณาเข้าใช้งานใหม่อีกครั้ง');
+  });
 
   function checkVersion(){
     try{
@@ -6949,7 +6986,7 @@
           var m = /CACHE_VERSION\s*=\s*'([^']+)'/.exec(t);
           noteVer(m ? m[1] : APP_VER);
         })
-        .catch(function(){});   /* ไม่มีเน็ตก็ปล่อยไว้ ไม่เตะใครออก */
+        .catch(function(){ noteVer(''); });   /* อ่าน sw.js ไม่ได้ ก็ยังเทียบเลขของ index ได้ */
     }catch(e){}
   }
 
@@ -7171,12 +7208,19 @@
     return 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, MAP_Z);
   }
 
-  function drawMap(){
+  var mapCenterId = null;   /* วาดภาพแผนที่ไว้ที่ไซต์ไหน */
+
+  /* โหลดภาพแผนที่ใหม่ — ทำเฉพาะตอนเปลี่ยนไซต์ ไม่ใช่ทุกครั้งที่พิกัดขยับ
+     เดิมเรียกทุก 10 วิ ภาพทั้งหมดถูกสร้างใหม่หมด จอเลยกระตุกและดูเหมือนไม่ขยับ */
+  function drawMap(force){
     var box = $('tmTiles');
     if(!box || !geoNow) return;
     var st = currentSite();
-    var c  = st ? { lat: st.lat, lng: st.lng } : { lat: geoNow.lat, lng: geoNow.lng };
+    var key = st ? st.id : 'me';
+    if(!force && key === mapCenterId && box.childNodes.length){ placeDot(); return; }
+    mapCenterId = key;
 
+    var c = st ? { lat: st.lat, lng: st.lng } : { lat: geoNow.lat, lng: geoNow.lng };
     var W = box.clientWidth || 320, H = box.clientHeight || 214;
     var cp = worldPx(c.lat, c.lng);
     var n  = Math.pow(2, MAP_Z);
@@ -7194,8 +7238,9 @@
       }
     }
     box.innerHTML = out.join('');
+    box._lat = c.lat; box._lng = c.lng; box._w = W; box._h = H;
 
-    var ring = $('tmRing'), pin = $('tmPin'), dot = $('tmDot');
+    var ring = $('tmRing'), pin = $('tmPin');
     if(st){
       var rad = GEOFENCE_M / mPerPx(c.lat);
       ring.style.display = '';
@@ -7209,10 +7254,17 @@
       ring.style.display = 'none';
       pin.style.display  = 'none';
     }
+    placeDot();
+  }
 
+  /* ขยับเฉพาะจุดสีน้ำเงิน ทำได้ถี่เท่าไหร่ก็ได้ ไม่ต้องโหลดภาพใหม่ */
+  function placeDot(){
+    var box = $('tmTiles'), dot = $('tmDot');
+    if(!box || !dot || !geoNow || box._lat === undefined) return;
+    var cp = worldPx(box._lat, box._lng);
     var up = worldPx(geoNow.lat, geoNow.lng);
-    var dx = up.x - cp.x + W / 2, dy = up.y - cp.y + H / 2;
-    if(dx < -20 || dx > W + 20 || dy < -20 || dy > H + 20){
+    var dx = up.x - cp.x + box._w / 2, dy = up.y - cp.y + box._h / 2;
+    if(dx < -20 || dx > box._w + 20 || dy < -20 || dy > box._h + 20){
       dot.style.display = 'none';       /* ยืนไกลจนหลุดกรอบแผนที่ */
     } else {
       dot.style.display = '';
@@ -7311,7 +7363,7 @@
     geoBox('');
     autoPickSite();     /* ขยับที่ ไซต์ใกล้สุดก็เปลี่ยน */
     paintSiteBtn();
-    drawMap();
+    drawMap();          /* ไซต์เดิม = ขยับแค่จุด ไซต์เปลี่ยน = โหลดภาพใหม่ */
     var d = $('tmDist');
     if(d){
       d.style.display = '';
@@ -7335,23 +7387,23 @@
     applyGeo();
   }
 
-  function startGeo(userAsked){
+  function startGeo(){
     if(geoWatch === null){
+      /* maximumAge:0 = ห้ามเอาค่าเก่าที่เครื่องเก็บไว้มาใช้ ต้องวัดใหม่ทุกครั้ง
+         ไม่งั้นเดินไปแล้วตัวเลขยังค้างอยู่ที่เดิมเป็นนาที */
       geoWatch = navigator.geolocation.watchPosition(takeGeo, geoFail, {
-        enableHighAccuracy: true,
-        maximumAge: userAsked ? 0 : 10000,
-        timeout: 25000
+        enableHighAccuracy: true, maximumAge: 0, timeout: 25000
       });
     }
     /* watchPosition ยิงเฉพาะตอนตำแหน่งขยับพอสมควร ยืนอยู่กับที่จะเงียบไปเลย
-       จึงถามซ้ำเองทุก 10 วินาที ค่าความแม่นยำกับระยะจะได้ขยับตามจริง */
+       จึงถามซ้ำเองทุก 3 วินาที ค่าความแม่นยำกับระยะจะได้เดินตามจริง */
     if(geoTick === null){
       geoTick = setInterval(function(){
         if(!$('tmTiles') && !jobOpen) return;      /* ไม่ได้อยู่หน้าที่ใช้พิกัด */
         navigator.geolocation.getCurrentPosition(takeGeo, function(){}, {
-          enableHighAccuracy: true, maximumAge: 5000, timeout: 15000
+          enableHighAccuracy: true, maximumAge: 0, timeout: 10000
         });
-      }, 10000);
+      }, 3000);
     }
   }
 
@@ -7546,7 +7598,7 @@
       siteManual = false;
       paintSiteBtn();
       paintFence();
-      drawMap();
+      drawMap(true);
     });
   }
 
@@ -7718,7 +7770,18 @@
   /* ---- กล่องยืนยันก่อนทำรายการ ----
      กันกดพลาด เพราะลงเวลาแล้วแก้เองไม่ได้ */
   var cfFn = null;
-  function confirmBox(msg, fn){
+  var CF_TICK = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" ' +
+    'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+  /* opts: { title, icon, bg, color, ok }  ไม่ส่งมาก็ใช้ของเดิม */
+  function confirmBox(msg, fn, opts){
+    opts = opts || {};
+    $('cfT').textContent   = opts.title || 'ยืนยันการทำรายการ';
+    $('cfT').style.color   = opts.color || '#3FAE6A';
+    $('cfIc').innerHTML    = opts.icon  || CF_TICK;
+    $('cfIc').style.background = opts.bg || '#3FAE6A';
+    $('cfYes').textContent = opts.ok    || 'ตกลง';
+    $('cfYes').style.background = opts.color || '#3FAE6A';
     $('cfM').textContent = msg;
     cfFn = fn;
     $('cfMask').classList.add('on');
@@ -7739,11 +7802,27 @@
     return 'https://www.google.com/maps/dir/?api=1&destination=' +
            st.lat + ',' + st.lng + '&travelmode=driving';
   }
+  /* หมุด Google Maps สี่สีตามแบรนด์ ให้ช่างรู้ทันทีว่ากำลังจะออกไปแอปไหน */
+  var GMAP_ICON =
+    '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">' +
+      '<path d="M12 2a7.5 7.5 0 0 0-6.1 11.9L12 22l6.1-8.1A7.5 7.5 0 0 0 12 2z" fill="#EA4335"/>' +
+      '<path d="M5.9 13.9A7.5 7.5 0 0 1 4.5 9.5c0-2.1.9-4 2.3-5.3L12 9.5z" fill="#1A73E8"/>' +
+      '<path d="M6.8 4.2A7.5 7.5 0 0 1 12 2c2.6 0 4.9 1.3 6.2 3.3L12 9.5z" fill="#4285F4"/>' +
+      '<path d="M18.2 5.3A7.5 7.5 0 0 1 19.5 9.5c0 1.6-.5 3.1-1.4 4.4L12 9.5z" fill="#FBBC04"/>' +
+      '<path d="M12 9.5l6.1 4.4L12 22l-6.1-8.1z" fill="#34A853"/>' +
+      '<circle cx="12" cy="9.5" r="2.8" fill="#fff"/>' +
+    '</svg>';
+
   function openRoute(st){
     var u = mapsUrl(st);
     if(!u) return;
-    if(window.openLink){ openLink(u); }
-    else { window.open(u, '_blank', 'noopener'); }
+    confirmBox('เปิดเส้นทางไป ' + (st.name || 'ไซต์นี้') + ' ในแอป Google Maps',
+      function(){
+        if(window.openLink){ openLink(u); }
+        else { window.open(u, '_blank', 'noopener'); }
+      },
+      { title:'ไปที่ Google Maps', icon:GMAP_ICON, bg:'#fff',
+        color:'#1A73E8', ok:'เปิดแผนที่' });
   }
 
   /* ---- ชื่อไซต์ที่ใช้อยู่ บนหน้าลงเวลา ---- */
@@ -7777,6 +7856,7 @@
   }
 
   function paneSites(){
+    mapCenterId = null;
     var icOffice = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>';
     var icSite   = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="2"/></svg>';
     var icPin    = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
@@ -8650,6 +8730,7 @@
       '<div class="tm-tbl" id="tmTbl"></div>' +
       '<p class="tm-note" id="tmNote"></p>';
 
+    mapCenterId = null;   /* DOM ถูกสร้างใหม่ ภาพแผนที่หายไปด้วย ต้องวาดใหม่ */
     autoPickSite();
     paintSiteBtn();
     paintClock();
@@ -8699,7 +8780,7 @@
        ไม่งั้นทุกครั้งที่กลับมาหน้านี้จะค้างที่ "กำลังอ่านตำแหน่ง…"
        เพราะ watchPosition ยิงเฉพาะตอนตำแหน่งขยับ ยืนนิ่ง ๆ จะไม่มีอะไรมาปลุก */
     if(geoNow){ applyGeo(); } else { geoBox('<p>กำลังอ่านตำแหน่ง…</p>'); }
-    startGeo(userAsked);
+    startGeo();
   }
 
   function geoFail(err){
