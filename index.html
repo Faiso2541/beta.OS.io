@@ -4,7 +4,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>McEnergy | Service &amp; Maintenance Report</title>
 <meta name="description" content="แบบฟอร์มรายงานตรวจสอบและบำรุงรักษาอุปกรณ์ออนไลน์ — McEnergy Evolution Co., Ltd.">
 <meta name="theme-color" content="#16264A">
@@ -47,6 +47,7 @@
   /* ---- top bar ---- */
   .topbar{
     position:sticky;top:0;z-index:50;
+    padding-top:env(safe-area-inset-top,0px);
     background:var(--paper);
     border-bottom:1px solid var(--line);
   }
@@ -221,7 +222,20 @@
   /* ================== หน้าเข้าใช้งาน + เมนู (v2) ==================
      สองหน้านี้ทับทั้งจอ ปิดฟอร์มไว้ข้างหลัง ไม่ยุ่งกับโครงเดิมของฟอร์มเลย
      ปิดทั้งคู่เมื่อไหร่ ฟอร์มก็กลับมาเป็นเหมือนเดิมทุกอย่าง */
-  .scr{position:fixed;inset:0;z-index:400;overflow-y:auto;display:none;background:var(--page);}
+  /* ---- แถบรอยบากบนสุด ----
+     เดิมไม่ได้กำหนดอะไรไว้ เบราว์เซอร์เลยหยิบสีจากอะไรก็ได้ที่อยู่บนสุดตอนนั้น
+     บางหน้าเลยได้ขาว บางหน้าได้กรมท่า บางหน้าได้ดำ
+     ตอนนี้ปูกรมท่าไว้ทุกหน้าเท่ากันหมด และเว้นที่ไม่ให้เนื้อหามุดใต้รอยบาก */
+  html{background:var(--navy);}
+  .scr{
+    position:fixed;inset:0;z-index:400;overflow-y:auto;display:none;
+    background:var(--page);box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+  }
+  .scr::before{
+    content:'';position:fixed;top:0;left:0;right:0;z-index:3;
+    height:env(safe-area-inset-top,0px);background:var(--navy);
+  }
   .scr.on{display:block;}
   body.gated{overflow:hidden;}
 
@@ -280,10 +294,12 @@
   }
   .ld-lead{color:rgba(255,255,255,.72);font-size:13.5px;}
   .ld-row{display:flex;align-items:center;justify-content:center;max-width:100%;}
+  /* ห้ามใส่ var() ใน steps() เบราว์เซอร์อ่านไม่ออก ทั้งบรรทัด animation จะเสีย
+     ชื่อเลยไม่พิมพ์เลย  ตอนนี้ให้ JS เป็นคนสั่ง animation หลังวัดความกว้างเสร็จ */
   .ld-nm{
     overflow:hidden;white-space:nowrap;color:#F5C518;
     font-size:19px;font-weight:700;font-family:'Sora',sans-serif;line-height:1.4;
-    width:0;animation:ldType 5s steps(var(--n,12)) infinite;
+    width:0;
   }
   @keyframes ldType{ 0%,15%{width:0;} 75%,100%{width:var(--w,10em);} }
   .ld-car{
@@ -297,11 +313,12 @@
   /* เต็มความกว้างจอ ไม่บีบเป็นคอลัมน์กลาง
      บนจอกว้างค่อยหยุดที่ 760px ไม่งั้นแถวเมนูจะยืดจนอ่านลำบาก */
   .menu-wrap{max-width:760px;margin:0 auto;padding:14px 14px 40px;}
-  @media (max-width:820px){ .menu-wrap{max-width:none;padding:12px 12px 40px;} }
+  @media (max-width:820px){ .menu-wrap{max-width:none;padding:0 12px 40px;} }
   .menu-head{
-    background:var(--navy);border-radius:12px 12px 0 0;padding:16px;
+    background:var(--navy);border-radius:0 0 0 0;padding:16px;
     display:flex;align-items:center;gap:12px;
   }
+  @media (min-width:821px){ .menu-head{border-radius:12px 12px 0 0;} }
   .menu-av{
     width:38px;height:38px;border-radius:50%;background:#E4568E;color:#fff;overflow:hidden;
     font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;
@@ -6861,6 +6878,13 @@
     { u:'Enter@mcenergy',          p:'100110', name:'นักศึกษาฝึกงาน', role:'ฝึกงาน' }
   ];
 
+  /* ---- บังคับล็อกอินใหม่ทุกครั้งที่โค้ดเปลี่ยน ----
+     อ่านเลขเวอร์ชันจาก sw.js ที่บั๊มอยู่แล้วทุกรอบที่แก้ไฟล์
+     จึงมีเลขเดียวให้ดูแล ไม่มีทางลืมบั๊กอีกตัวจนหลุด
+     อ่านไม่ได้ (ไม่มีเน็ต) ก็ไม่เตะใครออก ใช้ของเดิมต่อไป */
+  var APP_VER = 'mce-report-3.7.1';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
+  var curVer  = null;
+
   var AUTH_KEY = 'mce_auth_v1';
   var SENT_KEY = 'mce_sent_log_v1';
   var me = null;
@@ -6872,6 +6896,47 @@
       if(d.exp && Date.now() > d.exp){ localStorage.removeItem(AUTH_KEY); return null; }
       return d;
     }catch(e){ return null; }
+  }
+
+  function forceLogout(msg){
+    try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
+    me = null;
+    if(loadTimer){ clearTimeout(loadTimer); loadTimer = null; }
+    try{ stopGeo(); dwClose(); }catch(e){}
+    $('authUser').value = ''; $('authPass').value = '';
+    if(msg){
+      $('authErr').textContent = msg;
+      $('authErr').classList.add('on');
+    }
+    showScreen('auth');
+  }
+
+  /* รู้เวอร์ชันปัจจุบันแล้ว เทียบกับที่ค้างอยู่ในเครื่อง */
+  function noteVer(v){
+    curVer = v;
+    var d = readAuth();
+    if(!d) return;
+    if(!d.ver){
+      /* ล็อกอินไปก่อนที่จะรู้เวอร์ชัน เติมให้ ไม่ต้องเตะออก */
+      d.ver = v;
+      try{ localStorage.setItem(AUTH_KEY, JSON.stringify(d)); }catch(e){}
+      return;
+    }
+    if(d.ver !== v){
+      forceLogout('ระบบมีการอัปเดต กรุณาเข้าใช้งานใหม่อีกครั้ง');
+    }
+  }
+
+  function checkVersion(){
+    try{
+      fetch('./sw.js', { cache:'reload' })
+        .then(function(r){ return r.text(); })
+        .then(function(t){
+          var m = /CACHE_VERSION\s*=\s*'([^']+)'/.exec(t);
+          noteVer(m ? m[1] : APP_VER);
+        })
+        .catch(function(){});   /* ไม่มีเน็ตก็ปล่อยไว้ ไม่เตะใครออก */
+    }catch(e){}
   }
 
   /* ตรงนี้คือจุดเดียวที่ต้องเปลี่ยนตอนย้ายไปตรวจที่เซิร์ฟเวอร์ */
@@ -8780,7 +8845,7 @@
     /* exp:0 = ไม่มีวันหมดอายุ ค้างไว้จนกว่าจะกดออกจากระบบเอง */
     try{
       localStorage.setItem(AUTH_KEY, JSON.stringify({
-        u: hit.u, name: hit.name, role: hit.role, exp: 0
+        u: hit.u, name: hit.name, role: hit.role, exp: 0, ver: curVer
       }));
     }catch(e){}
     $('authPass').value = '';
@@ -8796,13 +8861,17 @@
     var nm = me ? me.name : '';
     el.textContent = nm;
 
-    /* วัดความกว้างจริงของชื่อ แล้วให้อนิเมชันพิมพ์วิ่งไปถึงเท่านั้นพอดี
-       ชื่อยาวสั้นไม่เท่ากัน ถ้าตั้งค่าตายตัวจะพิมพ์ไม่จบหรือค้างว่าง */
+    /* วัดความกว้างจริงของชื่อก่อน แล้วให้อนิเมชันพิมพ์วิ่งไปหยุดตรงนั้นพอดี
+       ชื่อยาวสั้นไม่เท่ากัน ถ้าตั้งตายตัวจะพิมพ์ไม่จบหรือค้างว่างท้ายบรรทัด */
+    el.style.animation = 'none';
     el.style.width = 'auto';
     var w = el.scrollWidth;
-    el.style.removeProperty('width');
+    el.style.width = '';
     el.style.setProperty('--w', w + 'px');
-    el.style.setProperty('--n', Math.max(6, nm.length));
+
+    /* บังคับให้เบราว์เซอร์คิดใหม่ ไม่งั้นเปิดหน้านี้รอบสองอนิเมชันจะไม่เล่นซ้ำ */
+    void el.offsetWidth;
+    el.style.animation = 'ldType 5s steps(' + Math.max(8, nm.length) + ', end) 1 both';
 
     showScreen('load');
     if(loadTimer){ clearTimeout(loadTimer); }
@@ -8880,6 +8949,7 @@
   }
 
   /* ---- init ---- */
+  checkVersion();                  /* โค้ดเปลี่ยน = ให้ทุกคนล็อกอินใหม่ */
   syncTime();                      /* เทียบนาฬิกากับเซิร์ฟเวอร์ก่อนอย่างอื่น */
   setInterval(syncTime, 600000);   /* แล้วเทียบซ้ำทุก 10 นาที */
   window.addEventListener('online', syncTime);
