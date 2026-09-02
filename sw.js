@@ -3,7 +3,7 @@
    Bump CACHE_VERSION every time index.html changes (1.11.0 -> 1.11.1 -> ...).
    Bumping the number also wipes every old cache on the phone, which is the
    surest way to get a stuck device back onto the current form. */
-var CACHE_VERSION = 'mce-report-3.9.0';
+var CACHE_VERSION = 'mce-report-4.0.0';
 
 /* how long to wait for the network before falling back to the stored copy.
    long enough for a weak site signal, short enough that the form still opens */
