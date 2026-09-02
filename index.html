@@ -276,6 +276,8 @@
     display:none;margin-top:13px;background:#FCEBEB;color:#8C2F2F;
     border-radius:8px;padding:9px 12px;font-size:12.5px;line-height:1.5;
   }
+  /* ข้อความแจ้งอัปเดต ไม่ใช่ข้อความผิดพลาด จึงใช้โทนน้ำเงิน */
+  .auth-err.info{background:#E7F0F7;color:#1D5A80;}
   .auth-err.on{display:block;}
 
   /* ---- หน้ากำลังเข้าสู่ระบบ ----
@@ -1996,26 +1998,6 @@
     </button>
   </div>
 </aside>
-
-<!-- ============ กล่องแจ้งอัปเดต ============ -->
-<div class="cf-mask" id="upMask" style="z-index:540;">
-  <div class="cf-box" role="alertdialog" aria-labelledby="upT">
-    <div class="cf-ic" style="background:#2C6E8F;" aria-hidden="true">
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
-           stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg>
-    </div>
-    <div class="cf-t" id="upT" style="color:#2C6E8F;">มีการอัปเดต</div>
-    <div class="cf-m">ระบบมีเวอร์ชันใหม่<br>กรุณาเข้าสู่ระบบอีกครั้ง</div>
-    <div style="margin-top:20px;">
-      <button type="button" id="upOut"
-        style="width:100%;border:none;border-radius:22px;padding:12px;font-family:inherit;
-               font-size:14px;font-weight:600;color:#fff;background:#C94F4F;cursor:pointer;">
-        ออกจากระบบ
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- ============ กล่องยืนยันการทำรายการ ============ -->
 <div class="cf-mask" id="cfMask">
@@ -6889,21 +6871,16 @@
      อ่านเลขเวอร์ชันจาก sw.js ที่บั๊มอยู่แล้วทุกรอบที่แก้ไฟล์
      จึงมีเลขเดียวให้ดูแล ไม่มีทางลืมบั๊กอีกตัวจนหลุด
      อ่านไม่ได้ (ไม่มีเน็ต) ก็ไม่เตะใครออก ใช้ของเดิมต่อไป */
-  var APP_VER = 'mce-report-3.9.0';   /* ตัวสำรอง ใช้เมื่ออ่าน sw.js ไม่ได้ */
-  var curVer  = null;
+  var APP_VER = 'mce-report-4.0.0';   /* เลขรุ่นของไฟล์นี้ ต้องบั๊มทุกครั้งที่แก้ */
 
+  /* ไม่เก็บการเข้าใช้งานลงเครื่องแล้ว เปิดลิงก์เมื่อไหร่ต้องล็อกอินใหม่ทุกครั้ง
+     คีย์เดิมยังอยู่เพื่อไล่ลบของเก่าที่ค้างในเครื่องช่างให้หมด */
   var AUTH_KEY = 'mce_auth_v1';
   var SENT_KEY = 'mce_sent_log_v1';
   var me = null;
 
-  function readAuth(){
-    try{
-      var d = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
-      if(!d || !d.u) return null;
-      if(d.exp && Date.now() > d.exp){ localStorage.removeItem(AUTH_KEY); return null; }
-      return d;
-    }catch(e){ return null; }
-  }
+  /* บัญชีอยู่ในหน่วยความจำเท่านั้น ปิดหน้าหรือรีเฟรชก็หลุด ต้องเข้าใหม่ */
+  function readAuth(){ return me; }
 
   /* ล้างข้อมูลที่ใส่ไว้ตอนทดลองออกจากเครื่องช่างให้หมด
      ทุกรายการที่สร้างจากโหมดทดลองติดธง demo:true ไว้
@@ -6942,53 +6919,20 @@
     showScreen('auth');
   }
 
-  /* ---- เตือนเมื่อมีการอัปเดต ----
-     เก็บคู่เลขไว้สองตัว: เลขในไฟล์ index (APP_VER) กับเลขใน sw.js
-     ถ้าตัวใดตัวหนึ่งไม่ตรงกับที่เคยเห็น แปลว่ามีการอัปไฟล์ใหม่
-     ครอบคลุมกรณีอัปแค่ไฟล์เดียว ซึ่งเป็นเหตุที่รอบก่อนไม่ทำงาน */
+  /* ---- รู้ว่ามีการอัปเดตไหม ----
+     เทียบจาก APP_VER ที่ฝังอยู่ในไฟล์นี้เอง ไม่ต้องไปอ่าน sw.js
+     พออัป index ใหม่ เครื่องโหลดไฟล์ใหม่มา เลขก็เปลี่ยนทันที
+     ไม่ต้องใช้เน็ต ไม่มีเตือนผิดตอนสัญญาณหลุด ไม่ต้องอัปครบสองไฟล์ */
   var SEEN_KEY = 'mce_seen_ver_v1';
-
-  function showUpdate(){
-    $('upMask').classList.add('on');
-  }
-
-  function noteVer(swVer){
-    curVer = swVer;
-    var now = APP_VER + '|' + (swVer || '');
-    var seen = null;
-    try{ seen = localStorage.getItem(SEEN_KEY); }catch(e){}
-
-    if(!seen){
-      /* เพิ่งเคยเห็นครั้งแรก จำไว้เฉย ๆ ไม่ต้องเตะใครออก */
-      try{ localStorage.setItem(SEEN_KEY, now); }catch(e){}
-      return;
-    }
-    if(seen === now) return;
-
-    /* เลขเปลี่ยน = มีของใหม่ จำเลขใหม่ไว้ แล้วบอกผู้ใช้ */
-    try{ localStorage.setItem(SEEN_KEY, now); }catch(e){}
-    if(readAuth()){ showUpdate(); }
-  }
-
-  on('upOut', 'click', function(){
-    $('upMask').classList.remove('on');
-    forceLogout('ระบบมีการอัปเดต กรุณาเข้าใช้งานใหม่อีกครั้ง');
-  });
+  var justUpdated = false;
 
   function checkVersion(){
-    try{
-      /* ต่อท้ายด้วยเลขเวลา ทำให้ลิงก์ไม่ซ้ำเดิม
-         เครื่องที่ยังใช้ Service Worker ตัวเก่าอยู่จะหาในแคชไม่เจอ
-         แล้ววิ่งไปเอาจากเน็ตแทน ได้เลขเวอร์ชันจริง */
-      fetch('./sw.js?v=' + Date.now(), { cache:'reload' })
-        .then(function(r){ return r.text(); })
-        .then(function(t){
-          var m = /CACHE_VERSION\s*=\s*'([^']+)'/.exec(t);
-          noteVer(m ? m[1] : APP_VER);
-        })
-        .catch(function(){ noteVer(''); });   /* อ่าน sw.js ไม่ได้ ก็ยังเทียบเลขของ index ได้ */
-    }catch(e){}
+    var seen = null;
+    try{ seen = localStorage.getItem(SEEN_KEY); }catch(e){}
+    try{ localStorage.setItem(SEEN_KEY, APP_VER); }catch(e){}
+    if(seen && seen !== APP_VER){ justUpdated = true; }
   }
+
 
   /* ตรงนี้คือจุดเดียวที่ต้องเปลี่ยนตอนย้ายไปตรวจที่เซิร์ฟเวอร์ */
   function signIn(u, p){
@@ -8815,6 +8759,7 @@
     var hit = signIn(u, p);
     if(!hit){
       $('authErr').textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+      $('authErr').classList.remove('info');
       $('authErr').classList.add('on');
       $('authPass').value = '';
       $('authPass').focus();
@@ -8822,12 +8767,6 @@
     }
     $('authErr').classList.remove('on');
     me = hit;
-    /* exp:0 = ไม่มีวันหมดอายุ ค้างไว้จนกว่าจะกดออกจากระบบเอง */
-    try{
-      localStorage.setItem(AUTH_KEY, JSON.stringify({
-        u: hit.u, name: hit.name, role: hit.role, exp: 0, ver: curVer
-      }));
-    }catch(e){}
     $('authPass').value = '';
     runLoading();
   });
@@ -8911,9 +8850,14 @@
   })();
 
   function bootAuth(){
-    var d = readAuth();
-    if(d){ me = { u:d.u, name:d.name, role:d.role }; paintMenu(); showScreen('menu'); }
-    else { showScreen('auth'); }
+    /* ล้างของเก่าที่เคยเก็บไว้สมัยที่ยังจำการเข้าใช้งาน */
+    try{ localStorage.removeItem(AUTH_KEY); }catch(e){}
+    me = null;
+    if(justUpdated){
+      $('authErr').textContent = 'ระบบมีการอัปเดตเป็นเวอร์ชันใหม่ กรุณาเข้าสู่ระบบอีกครั้ง';
+      $('authErr').classList.add('on', 'info');
+    }
+    showScreen('auth');
   }
 
   /* ---- init ---- */
