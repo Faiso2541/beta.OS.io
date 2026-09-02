@@ -3,7 +3,7 @@
    Bump CACHE_VERSION every time index.html changes (1.11.0 -> 1.11.1 -> ...).
    Bumping the number also wipes every old cache on the phone, which is the
    surest way to get a stuck device back onto the current form. */
-var CACHE_VERSION = 'mce-report-3.7.1';
+var CACHE_VERSION = 'mce-report-3.8.1';
 
 /* how long to wait for the network before falling back to the stored copy.
    long enough for a weak site signal, short enough that the form still opens */
@@ -78,6 +78,17 @@ self.addEventListener('fetch', function(e){
 
   var url = new URL(req.url);
   var sameOrigin = url.origin === self.location.origin;
+
+  /* หน้าเว็บอ่านไฟล์นี้เพื่อดูเลขเวอร์ชันปัจจุบัน
+     ถ้าตอบจากแคช มันจะได้เลขเก่าตลอด เวอร์ชันเลยไม่มีวันเปลี่ยนในสายตาหน้าเว็บ
+     และระบบเตะออกเมื่ออัปเดตก็ไม่ทำงาน จึงต้องไปเอาจากเน็ตเสมอ */
+  if(sameOrigin && url.pathname.indexOf('sw.js') !== -1){
+    e.respondWith(
+      fetch(new Request(req.url, { cache: 'reload' }))
+        .catch(function(){ return caches.match(req); })
+    );
+    return;
+  }
 
   /* the page itself: always network first, and never trust the HTTP cache,
      so a newly deployed form is picked up the moment the phone has signal.
